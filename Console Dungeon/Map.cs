@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Console_Dungeon
 {
-    internal class Program
+    internal class Map
     {
-
-    }
-
+        public enum Elements
+        {
+        }
     }
 }
