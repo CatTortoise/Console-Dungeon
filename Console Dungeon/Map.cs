@@ -15,6 +15,6 @@ namespace Console_Dungeon
         private Elements[][] _map;
         private Entity[] _entitys;
         private bool _isCleared ;
-
+        
     } 
 }
