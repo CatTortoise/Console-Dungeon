@@ -11,8 +11,10 @@ namespace Console_Dungeon
         public enum Elements
         {
             # region Environment
+            NonVisibleArea,
             Wall,
-            Doors,
+            DoorVertical,
+            DoorHorizontal,
             VisibleArea,
             #endregion
             # region Entities 
@@ -23,13 +25,35 @@ namespace Console_Dungeon
             Mimic,
             #endregion
             #region Interruptibles
-            Trap,
+            TrapArmed,
+            TrapDisarmed,
             TreasureChest,
-            Equipment,
-            Consumables
+            Item
             #endregion           
         }
+        static private Dictionary<Elements, char> _elementDictionary;
 
+        internal static Dictionary<Elements, char> ElementDictionary { get => _elementDictionary; private set => _elementDictionary = value; }
 
+        public static void SetElementDictionary()
+        {
+            ElementDictionary = new Dictionary<Elements, char>()
+            {
+                { Elements.NonVisibleArea,(char)32 },
+                { Elements.Wall, (char)35 },
+                { Elements.DoorVertical, (char)124 },
+                { Elements.DoorHorizontal, (char)95 },
+                { Elements.VisibleArea, (char)183 },
+                { Elements.Player, (char)2 },
+                { Elements.Goblin, (char)103 },
+                { Elements.Hob_Goblin, (char)71 },
+                { Elements.Minatore, (char)77 },
+                { Elements.Mimic, (char)63 },
+                { Elements.TrapArmed, (char)15 },
+                { Elements.TrapDisarmed, (char)42 },
+                { Elements.TreasureChest, (char)63 },
+                { Elements.Item, (char)36 }
+            };
+        }
     }
 }

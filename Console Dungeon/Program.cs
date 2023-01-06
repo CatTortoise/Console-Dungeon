@@ -10,18 +10,12 @@ namespace Console_Dungeon
     {
         static void Main(string[] args)
         {
-            int cI2 = 0;
-            char c2 = new();
-            for (int i = 0; i < 1000; i++)
-            {
-                for (int j = 0; j < 5; j++)
-                {
-                    c2 = (char)cI2;
-                    Console.Write($"[{c2}, Cod:{cI2} ]");
-                    cI2++;
-                }
-                Console.WriteLine();
-            }
+            List<Map> maps = new List<Map>();
+            maps.Add(new Map());
+            maps[0].populateMap();
+            Element.SetElementDictionary();
+            Renderer.LaodMap(maps[0]);
+            Renderer.MapRenderer();
         }
 
     }

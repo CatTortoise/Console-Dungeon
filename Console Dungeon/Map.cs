@@ -12,9 +12,26 @@ namespace Console_Dungeon
 
         private int _mapHeight = 10;
         private int _mapWidth = 10;
-        private Elements[][] _map;
-        private Entity[] _entitys;
-        private bool _isCleared ;
-        
-    } 
+        private Envaironment[] _mapEnvironments;
+        private Entity[] _mapEntities;
+        private Interruptible[] _mapInterruptibles;
+        private bool _isCleared;
+
+        public Entity[] mapEntities { get => _mapEntities; set => _mapEntities = value; }
+
+        public void populateMap()
+        {
+            _mapEntities = new Entity[1]{ new("P1",new Location(5,5),Elements.Player,0) };
+        }
+
+        public void MoveTo(Location location,Entity entity)
+        {
+            //Checks if love is possible
+            mapEntities[entity.Id].MoveTo(location); 
+        }
+
+
+    }
 }
+
+
