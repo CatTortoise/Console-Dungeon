@@ -19,17 +19,24 @@ namespace Console_Dungeon
             _map = newMap;
             _entities = _map.mapEntities;
         }
+        public static void Erasure(List<Location> locations)
+        {
+            foreach (Location location in locations)
+            {
+                char str;
+                Elements elements = Elements.NonVisibleArea;
+                Console.SetCursorPosition(location.X, location.Y);
+                //Checks for another Entity at the location 
+                //Checks for another Interruptible at the location 
+                //Checks for another Envaironment at the location 
+                ElementDictionary.TryGetValue(elements, out str);
+                Console.Write(str);
+            }
+        }
 
         public static void MapRenderer()
         {
-            Console.SetCursorPosition(_entities[0].Location.X, _entities[0].Location.Y);
-            Console.Write(ElementDictionary[_entities[0].ElementCode]);
-            Console.SetCursorPosition(_entities[0].Location.X, _entities[0].Location.Y);
-            Console.Write(ElementDictionary[Elements.NonVisibleArea]);
-           _map.MoveTo(new Location(0,0), _entities[0]);
-            Console.SetCursorPosition(_entities[0].Location.X, _entities[0].Location.Y);
-            Console.Write(ElementDictionary[_entities[0].ElementCode]);
-
+            
         }
 
         public static void Render()

@@ -33,7 +33,7 @@ namespace Console_Dungeon
         }
         static private Dictionary<Elements, char> _elementDictionary;
 
-        internal static Dictionary<Elements, char> ElementDictionary { get => _elementDictionary; private set => _elementDictionary = value; }
+        public static Dictionary<Elements, char> ElementDictionary { get => _elementDictionary; private set => _elementDictionary = value; }
 
         public static void SetElementDictionary()
         {
