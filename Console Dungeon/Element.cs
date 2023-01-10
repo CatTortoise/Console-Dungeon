@@ -31,6 +31,13 @@ namespace Console_Dungeon
             Item
             #endregion           
         }
+        public enum ElementsTayp
+        {
+            Empty,
+            Environment,
+            Entities,
+            Interruptibles
+        }
         static private Dictionary<Elements, char> _elementDictionary = new Dictionary<Elements, char>()
             {
                 { Elements.NonVisibleArea,(char)32 },
