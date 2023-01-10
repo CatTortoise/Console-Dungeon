@@ -8,9 +8,22 @@ namespace Console_Dungeon
 {
     static class GameManager
     {
-        private static Map[] _maps;
+        private static Map[] _maps = new Map[10];
         private static Entity[] _entities;
-        private static List<Location> _locationsForErasure;
 
+
+        public static void StartConsoleDungeon()
+        {
+            _maps[0] = new Map();
+        }
+
+        private static void GameLoop()
+        {
+            do
+            {
+                
+            } while(true);
+        }
     }
 }
+

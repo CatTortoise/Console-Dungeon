@@ -9,17 +9,24 @@ namespace Console_Dungeon
 {
     class Map
     {
-
-        private int _mapHeight = 10;
-        private int _mapWidth = 10;
+        private Location _mapSize = new Location(10,10);
+        private Elements[][] _mapElements;
         private Envaironment[] _mapEnvironments;
         private Entity[] _mapEntities;
         private Interruptible[] _mapInterruptibles;
         private bool _isCleared;
 
+        public Map()
+        {
+            generateMap();
+            populateMap();
+        }
+
         public Entity[] mapEntities { get => _mapEntities; set => _mapEntities = value; }
 
-        public void populateMap()
+
+
+        private void populateMap()
         {
             _mapEntities = new Entity[1]{ new("P1",new Location(5,5),Elements.Player,0) };
         }
@@ -27,7 +34,13 @@ namespace Console_Dungeon
         public void MoveTo(Location location,Entity entity)
         {
             //Checks if love is possible
-            mapEntities[entity.Id].MoveTo(location); 
+            mapEntities[entity.Id].MoveTo(location);
+        }
+        private void generateMap()
+        {
+            //_mapElements = new Elements[location.y][]();
+            _mapEnvironments = new Envaironment[4];
+            _mapEnvironments[0] = new("Border", Elements.Wall, new Location(0, 0), _mapSize);
         }
 
 

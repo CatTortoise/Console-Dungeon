@@ -31,13 +31,7 @@ namespace Console_Dungeon
             Item
             #endregion           
         }
-        static private Dictionary<Elements, char> _elementDictionary;
-
-        public static Dictionary<Elements, char> ElementDictionary { get => _elementDictionary; private set => _elementDictionary = value; }
-
-        public static void SetElementDictionary()
-        {
-            ElementDictionary = new Dictionary<Elements, char>()
+        static private Dictionary<Elements, char> _elementDictionary = new Dictionary<Elements, char>()
             {
                 { Elements.NonVisibleArea,(char)32 },
                 { Elements.Wall, (char)35 },
@@ -54,6 +48,8 @@ namespace Console_Dungeon
                 { Elements.TreasureChest, (char)63 },
                 { Elements.Item, (char)36 }
             };
-        }
+
+        public static Dictionary<Elements, char> ElementDictionary { get => _elementDictionary; private set => _elementDictionary = value; }
+
     }
 }

@@ -10,12 +10,8 @@ namespace Console_Dungeon
     {
         static void Main(string[] args)
         {
-            List<Map> maps = new List<Map>();
-            maps.Add(new Map());
-            maps[0].populateMap();
-            Element.SetElementDictionary();
-            Renderer.LaodMap(maps[0]);
-            Renderer.MapRenderer();
+            GameManager.StartConsoleDungeon() ;
+
         }
 
     }
