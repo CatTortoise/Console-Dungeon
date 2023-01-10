@@ -9,19 +9,25 @@ namespace Console_Dungeon
     static class GameManager
     {
         private static Map[] _maps = new Map[10];
-        private static Entity[] _entities;
 
 
         public static void StartConsoleDungeon()
         {
+            Console.CursorVisible = false;
             _maps[0] = new Map();
+            Renderer.Render();
+            GameLoop();
         }
 
         private static void GameLoop()
         {
             do
             {
-                
+                foreach(Entity entity in _maps[0].mapEntities)
+                {
+                    _maps[0].MoveTo(InputManager.PlayerInput(entity), entity);
+                }
+                Renderer.Render();
             } while(true);
         }
     }

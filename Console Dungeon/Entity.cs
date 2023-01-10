@@ -14,6 +14,7 @@ namespace Console_Dungeon
         private Location _location;
         private ConsoleColor _color;
         private int _id;
+        private bool _IsPlayer;
         private bool _isAlive;
 
 

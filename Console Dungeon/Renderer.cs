@@ -10,8 +10,8 @@ namespace Console_Dungeon
     static class Renderer
     {
         private static Map _map;
-        private static Queue<Entity> _entities;
-        private static Queue<Envaironment> _envaironments;
+        private static Queue<Entity> _entities = new Queue<Entity>(10);
+        private static Queue<Envaironment> _envaironments = new Queue<Envaironment>(10);
         private static int _windowHeight;
         private static int _windowWidth; 
 
@@ -41,7 +41,7 @@ namespace Console_Dungeon
 
         private static void RenderEntity(Entity entity)
         {
-            RenderElement(entity.ElementCode, new Location(entity.Location.X, entity.Location.Y)))
+            RenderElement(entity.ElementCode, new Location(entity.Location.X, entity.Location.Y));
         }
 
         #endregion
@@ -54,8 +54,8 @@ namespace Console_Dungeon
             }
             for (int i = envaironment.LocationTopLeft.Y; i < envaironment.LocationBottomRight.Y; i++)
             {
-                Erasure(new Location(i, envaironment.LocationTopLeft.X));
-                Erasure(new Location(i, envaironment.LocationBottomRight.X));
+                Erasure(new Location(envaironment.LocationTopLeft.X));
+                Erasure(new Location(envaironment.LocationBottomRight.X, i));
             }
         }
 
@@ -68,8 +68,8 @@ namespace Console_Dungeon
             }
             for (int i = envaironment.LocationTopLeft.Y; i < envaironment.LocationBottomRight.Y; i++)
             {
-                RenderElement(envaironment.ElementCode,new Location(i, envaironment.LocationTopLeft.X));
-                RenderElement(envaironment.ElementCode,new Location(i, envaironment.LocationBottomRight.X));
+                RenderElement(envaironment.ElementCode,new Location(envaironment.LocationTopLeft.X, i));
+                RenderElement(envaironment.ElementCode,new Location(envaironment.LocationBottomRight.X, i));
             }
         }
 
@@ -93,14 +93,15 @@ namespace Console_Dungeon
             {
                 ErasureEnvaironment(envaironment);
                 RendererEnvaironment(envaironment);
-                _envaironments.Dequeue();
             }
+            _envaironments.Clear();
             foreach (Entity entity in _entities)
             {
                 Erasure(entity.PreviousLocation);
                 RenderEntity(entity);
-                _entities.Dequeue();
             }
+
+            _entities.Clear();
         }
 
     }

@@ -13,10 +13,10 @@ namespace Console_Dungeon
         private static string _inputMessage;
         private static ConsoleKey _keyInput;
         /*+GetKey()*/
-        private static Location PlayerInput()
+        public static Location PlayerInput(Entity entity)
         {
             _keyInput = Console.ReadKey(false).Key;
-            Location location = new();
+            Location location = entity.Location;
             switch (_keyInput)
             {
                 case ConsoleKey.Enter:
@@ -26,19 +26,19 @@ namespace Console_Dungeon
                     //Back or close
                     break;
                 case ConsoleKey.UpArrow:
-                    location.X = - 1;
+                    location.Y += - 1;
                     break;
                 case ConsoleKey.DownArrow:
-                    location.X = 1;
+                    location.Y += + 1;
                     break;
                 case ConsoleKey.LeftArrow:
-                    location.Y = -1;
+                    location.X += - 1;
                     break;
                 case ConsoleKey.RightArrow:
-                    location.Y = 1;
+                    location.X += 1;
                     break;
                 default:
-                    location = PlayerInput();
+                    location = PlayerInput(entity);
                     break;
             }
             return location;
