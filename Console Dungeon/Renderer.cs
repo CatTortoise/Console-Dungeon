@@ -9,17 +9,29 @@ namespace Console_Dungeon
 {
     static class Renderer
     {
-        private static Map _map;
+        private static Envaironment _logeLocation; 
+        private static Location _logeScreens; 
+        private static Location _mapLocation;
+        private static Location _mapScreens ;
+        private static Envaironment _menuLocation;
+        private static Location _menuScreens;
         private static Queue<Entity> _entities = new Queue<Entity>(10);
         private static Queue<Envaironment> _envaironments = new Queue<Envaironment>(10);
-        private static int _windowHeight;
-        private static int _windowWidth; 
 
 
-        public static void LaodMap(Map newMap)
+        public static void SetScreens(Map map)
         {
-            _map = newMap;
+            Console.SetWindowSize(Location.Xmax, Location.Ymax);
+            Console.SetBufferSize(Location.Xmax, Location.Ymax);
+            int screenDivaider = (int)Math.Ceiling(Location.Xmax * 0.2);
+            _logeScreens = new Location(screenDivaider, Location.Ymax);
+            _logeLocation = new("Log", Elements.DoorVertical,  new(_logeScreens.X, 0), _logeScreens);
+            _menuScreens = new Location(screenDivaider * 4, Location.Ymax);
+            _menuLocation = new("Menu", Elements.DoorVertical, new(_menuScreens.X, 0), _menuScreens);
+            EnvaironmentQueue(_logeLocation);
         }
+        
+
         #region Queue
         public static bool EntitiesQueue(Entity entity)
         {
@@ -47,30 +59,32 @@ namespace Console_Dungeon
         #endregion
         private static void ErasureEnvaironment(Envaironment envaironment)
         {
-            for (int i = envaironment.LocationTopLeft.X; i < envaironment.LocationBottomRight.X; i++)
+            for (int i = envaironment.LocationTopLeft.Y; i <= envaironment.LocationBottomRight.Y; i++)
+            {
+                Erasure(new Location(envaironment.LocationTopLeft.X,i));
+                Erasure(new Location(envaironment.LocationBottomRight.X, i));
+            }
+            for (int i = envaironment.LocationTopLeft.X; i <= envaironment.LocationBottomRight.X; i++)
             {
                 Erasure (new Location( i, envaironment.LocationTopLeft.Y));
                 Erasure(new Location(i, envaironment.LocationBottomRight.Y));
             }
-            for (int i = envaironment.LocationTopLeft.Y; i < envaironment.LocationBottomRight.Y; i++)
-            {
-                Erasure(new Location(envaironment.LocationTopLeft.X));
-                Erasure(new Location(envaironment.LocationBottomRight.X, i));
-            }
+
         }
 
         private static void RendererEnvaironment(Envaironment envaironment)
         {
-            for (int i = envaironment.LocationTopLeft.X; i < envaironment.LocationBottomRight.X; i++)
+            for (int i = envaironment.LocationTopLeft.Y; i <= envaironment.LocationBottomRight.Y; i++)
+            {
+                RenderElement(envaironment.ElementCode, new Location(envaironment.LocationTopLeft.X, i));
+                RenderElement(envaironment.ElementCode, new Location(envaironment.LocationBottomRight.X, i));
+            }
+            for (int i = envaironment.LocationTopLeft.X; i <= envaironment.LocationBottomRight.X; i++)
             {
                 RenderElement(envaironment.ElementCode,new Location(i, envaironment.LocationTopLeft.Y));
                 RenderElement(envaironment.ElementCode,new Location(i, envaironment.LocationBottomRight.Y));
             }
-            for (int i = envaironment.LocationTopLeft.Y; i < envaironment.LocationBottomRight.Y; i++)
-            {
-                RenderElement(envaironment.ElementCode,new Location(envaironment.LocationTopLeft.X, i));
-                RenderElement(envaironment.ElementCode,new Location(envaironment.LocationBottomRight.X, i));
-            }
+
         }
 
 
@@ -80,7 +94,7 @@ namespace Console_Dungeon
         }
         private static void RenderElement(Elements element, Location location)
         {
-            char str;
+            char str = 'A';
             Console.SetCursorPosition(location.X, location.Y);
             ElementDictionary.TryGetValue(element, out str);
             Console.Write(str);

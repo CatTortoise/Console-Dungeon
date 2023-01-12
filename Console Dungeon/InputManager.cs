@@ -15,7 +15,7 @@ namespace Console_Dungeon
         /*+GetKey()*/
         public static Location PlayerInput(Entity entity)
         {
-            _keyInput = Console.ReadKey(false).Key;
+            _keyInput = Console.ReadKey(true).Key;
             Location location = entity.Location;
             switch (_keyInput)
             {

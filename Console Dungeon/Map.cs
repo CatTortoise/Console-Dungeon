@@ -23,9 +23,8 @@ namespace Console_Dungeon
             GenerateCollisionsMap();
         }
 
-        public Entity[] mapEntities { get => _mapEntities; set => _mapEntities = value; }
-
-
+        public Entity[] mapEntities { get => _mapEntities; private set => _mapEntities = value; }
+        public Location MapSize { get => _mapSize; private set => _mapSize = value; }
 
         private void PopulateMap()
         {
@@ -44,9 +43,9 @@ namespace Console_Dungeon
         }
         private void GenerateMap()
         {
-            _mapCollisions = new ElementsTayp[_mapSize.X+1, _mapSize.Y+1] ;
+            _mapCollisions = new ElementsTayp[MapSize.X+1, MapSize.Y+1] ;
             _mapEnvironments = new Envaironment[4];
-            _mapEnvironments[0] = new("Border", Elements.Wall, new Location(0, 0), _mapSize);
+            _mapEnvironments[0] = new("Border", Elements.Wall, new Location(0, 0), MapSize);
             
         }
         private void GenerateCollisionsMap() 

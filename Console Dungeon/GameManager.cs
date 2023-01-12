@@ -15,6 +15,7 @@ namespace Console_Dungeon
         {
             Console.CursorVisible = false;
             _maps[0] = new Map();
+            Renderer.SetScreens(_maps[0]);
             Renderer.Render();
             GameLoop();
         }

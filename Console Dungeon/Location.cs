@@ -8,34 +8,72 @@ namespace Console_Dungeon
 {
     struct Location
     {
+        
         /// <summary>
         /// x = Width 
         /// </summary>
-        int _x;
+        int _x = 0;
+        public static readonly int Xmax = 160;
         /// <summary>
         /// y = height 
         /// </summary>
-        int _y;
-
-        /// <summary>
-        /// x = Width 
-        /// </summary>
-        public int X { get => _x; set => _x = value; }
-
-        /// <summary>
-        /// y = height 
-        /// </summary>
-        public int Y { get => _y; set => _y = value; }
+        int _y = 0;
+        public static readonly int Ymax = 45;
 
 
         /// <summary>
         /// x = Width 
+        /// </summary>
+        public int X { get => _x; 
+            set { 
+                if(Xmax <= value)
+                {
+                    _x = Xmax - 1;
+                }
+                else
+                {
+                    _x = value;
+                }
+            }
+        }
+
+        /// <summary>
         /// y = height 
         /// </summary>
-        public Location(int x, int y)
+        public int Y { get => _y;
+            set {
+                if (Ymax <= value)
+                {
+                    _y = Ymax - 1;
+                }
+                else
+                {
+                    _y = value;
+                }
+            }
+        }
+
+
+
+
+        /// <summary>
+        /// x = Width 
+        /// y = height 
+        /// </summary>
+        public Location GetLocation()
         {
-            _x = x;
-            _y = y;
+            return this;
+        }
+        public Location(int x,int y)
+        {
+            this.X = x;
+            this.Y = y;
+        }
+        public Location(Location location)
+        {
+            this.X = location.X;
+            this.Y = location.Y;
+            
         }
 
         /// <summary>
@@ -44,8 +82,8 @@ namespace Console_Dungeon
         /// </summary>
         public Location(int x)
         {
-            _x = x;
-            _y = 0;
+            this.X = x;
+            this.Y = 0;
         }
 
         /// <summary>
@@ -54,8 +92,8 @@ namespace Console_Dungeon
         /// </summary>
         public Location() 
         {
-            _x = 0;
-            _y = 0;
+            this.X = 0;
+            this.Y = 0;
         }
 
 
