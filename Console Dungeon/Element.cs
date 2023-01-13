@@ -38,6 +38,7 @@ namespace Console_Dungeon
             Entities,
             Interruptibles
         }
+
         static private Dictionary<Elements, char> _elementDictionary = new Dictionary<Elements, char>()
             {
                 { Elements.NonVisibleArea,(char)32 },

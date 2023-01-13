@@ -29,6 +29,8 @@ namespace Console_Dungeon
         private void PopulateMap()
         {
             _mapEntities = new Entity[1]{ new("P1",new Location(5,5),Elements.Player,0) };
+            Renderer.EntitiesQueue(_mapEntities[0], Renderer.Screen.Map);
+
         }
 
         public void MoveTo(Location location,Entity entity)
@@ -38,14 +40,19 @@ namespace Console_Dungeon
             {
                 _mapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Empty;
                 mapEntities[entity.Id].MoveTo(location);
+                Renderer.EntitiesQueue(_mapEntities[entity.Id], Renderer.Screen.Map);
                 GenerateCollisionsMap();
             }
         }
+
+     
+
         private void GenerateMap()
         {
             _mapCollisions = new ElementsTayp[MapSize.X+1, MapSize.Y+1] ;
             _mapEnvironments = new Envaironment[4];
             _mapEnvironments[0] = new("Border", Elements.Wall, new Location(0, 0), MapSize);
+            Renderer.EnvaironmentQueue(_mapEnvironments[0], Renderer.Screen.Map);
             
         }
         private void GenerateCollisionsMap() 

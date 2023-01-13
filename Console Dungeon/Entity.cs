@@ -26,6 +26,7 @@ namespace Console_Dungeon
         private int _toughness;
         private bool _isNotQueued;
 
+
         public Entity(string name, Location location, Element.Elements elementCode , int id)
         {
             Name = name;
@@ -33,9 +34,15 @@ namespace Console_Dungeon
             PreviousLocation = Location;
             ElementCode = elementCode;
             Id = id;
-            Renderer.EntitiesQueue(this);
         }
-
+        public Entity(string name, Location location, Location previousLocation, Element.Elements elementCode, int id)
+        {
+            Name = name;
+            Location = location;
+            PreviousLocation = previousLocation;
+            ElementCode = elementCode;
+            Id = id;
+        }
         public string Name { get => _name; private set => _name = value; }
         public Location Location { get => _location; private set => _location = value; }
         public Location PreviousLocation { get => _previousLocation; private set => _previousLocation = value; }
@@ -47,7 +54,6 @@ namespace Console_Dungeon
         {
             PreviousLocation = Location;
             Location = moveTo;
-            Renderer.EntitiesQueue(this);
         }
 
     }

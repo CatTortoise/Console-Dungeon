@@ -9,38 +9,71 @@ namespace Console_Dungeon
 {
     static class Renderer
     {
-        private static Envaironment _logeLocation; 
-        private static Location _logeScreens; 
-        private static Location _mapLocation;
-        private static Location _mapScreens ;
-        private static Envaironment _menuLocation;
-        private static Location _menuScreens;
-        private static Queue<Entity> _entities = new Queue<Entity>(10);
-        private static Queue<Envaironment> _envaironments = new Queue<Envaironment>(10);
-
-
-        public static void SetScreens(Map map)
+        public enum Screen
         {
+            Window,
+            Log,
+            Map,
+            Menu
+        }
+        private static Envaironment _logeLocation;
+        private static Dictionary<Screen, Location> _screens = new Dictionary<Screen, Location>();
+        private static Envaironment _menuLocation;
+        private static Queue<Entity> _entitiesMapQueue = new Queue<Entity>(10);
+
+        private static Queue<Envaironment> _envaironmentsMapQueue = new Queue<Envaironment>(10);
+        private static Queue<Envaironment> _logeScreenQueue = new Queue<Envaironment>(10);
+        private static Queue<Envaironment> _MenuScreenQueue = new Queue<Envaironment>(10);
+
+
+        public static void SetScreens()
+        {
+            Location _mapScreens;
+            Location _logeScreens;
+            Location _menuScreens;
             Console.SetWindowSize(Location.Xmax, Location.Ymax);
             Console.SetBufferSize(Location.Xmax, Location.Ymax);
             int screenDivaider = (int)Math.Ceiling(Location.Xmax * 0.2);
+
             _logeScreens = new Location(screenDivaider, Location.Ymax);
+            _screens.Add(Screen.Log, _logeScreens);
             _logeLocation = new("Log", Elements.DoorVertical,  new(_logeScreens.X, 0), _logeScreens);
+            EnvaironmentQueue(_logeLocation, Screen.Window);
+
             _menuScreens = new Location(screenDivaider * 4, Location.Ymax);
+            _screens.Add(Screen.Menu, _menuScreens);
             _menuLocation = new("Menu", Elements.DoorVertical, new(_menuScreens.X, 0), _menuScreens);
-            EnvaironmentQueue(_logeLocation);
+            EnvaironmentQueue(_menuLocation, Screen.Window);
+
+            _mapScreens = new Location(Location.Xmax/2, Location.Ymax/2);
+            _screens.Add(Screen.Map, _mapScreens);
         }
         
 
         #region Queue
-        public static bool EntitiesQueue(Entity entity)
+        public static bool EntitiesQueue(Entity entity, Screen screen)
         {
-            _entities.Enqueue(entity);
+            Entity EntityForQueue; 
+            Location res;
+            _screens.TryGetValue(screen, out res);
+            EntityForQueue = new(
+                $"{entity.Name} for Queue",
+                new(res.X + entity.Location.X, res.Y + entity.Location.Y),
+                new(res.X + entity.PreviousLocation.X, res.Y + entity.PreviousLocation.Y),
+                entity.ElementCode, entity.Id
+                );
+            _entitiesMapQueue.Enqueue(EntityForQueue);
             return true;
         }
-        public static void EnvaironmentQueue(Envaironment envaironment)
+        public static void EnvaironmentQueue(Envaironment envaironment,Screen screen)
         {
-            _envaironments.Enqueue(envaironment);
+            Envaironment envaironmentForQueue = new($"{envaironment.Name} for Queue", envaironment.ElementCode, envaironment.LocationTopLeft, envaironment.LocationBottomRight);
+            Location res;
+            _screens.TryGetValue(screen, out res);
+            res.X += envaironment.LocationTopLeft.X;
+            res.Y += envaironment.LocationTopLeft.Y;
+            envaironmentForQueue.ChangeLocation(res);
+            _envaironmentsMapQueue.Enqueue(envaironmentForQueue);
         }
         #endregion 
 
@@ -103,19 +136,19 @@ namespace Console_Dungeon
 
         public static void Render()
         {
-            foreach (Envaironment envaironment in _envaironments)
+            foreach (Envaironment envaironment in _envaironmentsMapQueue)
             {
                 ErasureEnvaironment(envaironment);
                 RendererEnvaironment(envaironment);
             }
-            _envaironments.Clear();
-            foreach (Entity entity in _entities)
+            _envaironmentsMapQueue.Clear();
+            foreach (Entity entity in _entitiesMapQueue)
             {
                 Erasure(entity.PreviousLocation);
                 RenderEntity(entity);
             }
 
-            _entities.Clear();
+            _entitiesMapQueue.Clear();
         }
 
     }

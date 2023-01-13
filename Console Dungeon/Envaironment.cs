@@ -15,15 +15,25 @@ namespace Console_Dungeon
 
         public Location LocationTopLeft { get => _locationTopLeft; private set => _locationTopLeft = value; }
         public Location LocationBottomRight { get => _locationBottomRight; private set => _locationBottomRight = value; }
-        public Element.Elements ElementCode { get => _ElementCode; set => _ElementCode = value; }
+        public Element.Elements ElementCode { get => _ElementCode; private set => _ElementCode = value; }
+        public string Name { get => _name; private set => _name = value; }
 
         public Envaironment(string name, Element.Elements elementCode, Location locationTopLeft, Location locationBottomRight)
         {
-            _name = name;
+            Name = name;
             ElementCode = elementCode;
             LocationTopLeft = locationTopLeft;
             LocationBottomRight = locationBottomRight;
-            Renderer.EnvaironmentQueue(this);
+        }
+        public void EnvaironmentQueue(Renderer.Screen screen)
+        {
+            Renderer.EnvaironmentQueue(this, screen);
+        }
+
+        public void ChangeLocation(Location location)
+        {
+            LocationBottomRight = new(LocationBottomRight.X - LocationTopLeft.X + location.X, LocationBottomRight.Y - LocationTopLeft.Y + location.Y);
+            LocationTopLeft = location;
         }
 
     }
