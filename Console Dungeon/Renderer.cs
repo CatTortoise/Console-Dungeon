@@ -24,6 +24,7 @@ namespace Console_Dungeon
         private static Queue<Envaironment> _envaironmentsMapQueue = new Queue<Envaironment>(10);
         private static Queue<Envaironment> _logeScreenQueue = new Queue<Envaironment>(10);
         private static Queue<Envaironment> _MenuScreenQueue = new Queue<Envaironment>(10);
+        private static bool _printeMenu = false;
 
 
         public static void SetScreens()
@@ -48,9 +49,13 @@ namespace Console_Dungeon
             _mapScreens = new Location(Location.Xmax/2, Location.Ymax/2);
             _screens.Add(Screen.Map, _mapScreens);
         }
-        
+
 
         #region Queue
+        public static void PrinteMenu()
+        {
+            _printeMenu = true;
+        }
         public static bool EntitiesQueue(Entity entity, Screen screen)
         {
             Entity EntityForQueue; 
@@ -77,7 +82,7 @@ namespace Console_Dungeon
         }
         #endregion 
 
-        #region IElement
+        
         public static bool Erasure(Location location)
         {
             RenderElement(Elements.NonVisibleArea, location);
@@ -89,7 +94,25 @@ namespace Console_Dungeon
             RenderElement(entity.ElementCode, new Location(entity.Location.X, entity.Location.Y));
         }
 
-        #endregion
+        private static void ErasureMenu()
+        {
+            Location locationStart;
+            Location locationEnd;
+            Menu.GetStarEndLocations(out locationStart, out locationEnd);
+
+            for (int i = locationStart.Y; i <= locationEnd.Y; i++)
+            {
+                Erasure(new Location(locationStart.X, i));
+                Erasure(new Location(locationEnd.X, i));
+            }
+            for (int i = locationStart.X; i <= locationEnd.X; i++)
+            {
+                Erasure(new Location(i, locationStart.Y));
+                Erasure(new Location(i, locationEnd.Y));
+            }
+
+        }
+
         private static void ErasureEnvaironment(Envaironment envaironment)
         {
             for (int i = envaironment.LocationTopLeft.Y; i <= envaironment.LocationBottomRight.Y; i++)
@@ -132,6 +155,22 @@ namespace Console_Dungeon
             ElementDictionary.TryGetValue(element, out str);
             Console.Write(str);
         }
+        private static void RenderMenu()
+        {
+            string str = Menu.GetMenuString();
+            Location locationStart;
+            Location locationEnd;
+            Location screen;
+            Menu.GetStarEndLocations(out locationStart, out locationEnd);
+            _screens.TryGetValue(Screen.Menu, out screen);
+
+            RenderStrin(str, locationStart);
+        }
+        private static void RenderStrin(string str, Location location)
+        {
+            Console.SetCursorPosition(location.X, location.Y);
+            Console.Write(str);
+        }
 
 
         public static void Render()
@@ -142,6 +181,14 @@ namespace Console_Dungeon
                 RendererEnvaironment(envaironment);
             }
             _envaironmentsMapQueue.Clear();
+
+            if (_printeMenu)
+            {
+                ErasureMenu();
+                RenderMenu();
+                _printeMenu = false;
+            }
+
             foreach (Entity entity in _entitiesMapQueue)
             {
                 Erasure(entity.PreviousLocation);

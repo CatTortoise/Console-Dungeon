@@ -55,6 +55,10 @@ namespace Console_Dungeon
             PreviousLocation = Location;
             Location = moveTo;
         }
-
+        public void MoveTo(Location moveTo, Location moveFrom)
+        {
+            PreviousLocation = moveFrom;
+            Location = moveTo;
+        }
     }
 }

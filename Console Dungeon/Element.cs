@@ -28,16 +28,24 @@ namespace Console_Dungeon
             TrapArmed,
             TrapDisarmed,
             TreasureChest,
-            Item
-            #endregion           
+            Item,
+            #endregion
+            #region Menu
+            Empty,
+            MenuIndicator,
+            IsString
+            #endregion
+
         }
         public enum ElementsTayp
         {
             Empty,
             Environment,
             Entities,
-            Interruptibles
+            Interruptibles,
+            Menu
         }
+        
 
         static private Dictionary<Elements, char> _elementDictionary = new Dictionary<Elements, char>()
             {
@@ -54,10 +62,14 @@ namespace Console_Dungeon
                 { Elements.TrapArmed, (char)15 },
                 { Elements.TrapDisarmed, (char)42 },
                 { Elements.TreasureChest, (char)63 },
-                { Elements.Item, (char)36 }
+                { Elements.Item, (char)36 },
+                { Elements.Empty,(char)32 },
+                { Elements.MenuIndicator, (char)187 }
             };
 
+
         public static Dictionary<Elements, char> ElementDictionary { get => _elementDictionary; private set => _elementDictionary = value; }
+
 
     }
 }
