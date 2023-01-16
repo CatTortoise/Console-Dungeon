@@ -20,17 +20,16 @@ namespace Console_Dungeon
         private static Location _endLocation;
         private static Location _startIndicatorLocation;
         #endregion
-        
+
         private static MenuType _curentMenuType = MenuType.ArrayDataStructures;
         private static Dictionary<MenuType, Location> _startIndicatorLocationDictionary = new Dictionary<MenuType, Location> { { MenuType.ArrayDataStructures, new(0, 1) } };
         private static Entity menuIndicator = new("MenuIndicator", _startIndicatorLocation, Element.Elements.MenuIndicator, 1);
 
-        public static Dictionary<MenuType, string> Menus { get => _menus; private set => _menus = value; }
+        public static Dictionary<MenuType, string[]> Menus { get => _menus; private set => _menus = value; }
         public static Dictionary<MenuType, Location> Endlocation { get => _endlocation; private set => _endlocation = value; }
         public static Entity MenuIndicator { get => menuIndicator; private set => menuIndicator = value; }
-       
+        public static MenuType CurentMenuType { get => _curentMenuType; private set => _curentMenuType = value; }
 
-        
         static Dictionary<MenuType, Location> _startlocation = new Dictionary<MenuType, Location>
         {
             {
@@ -44,25 +43,44 @@ namespace Console_Dungeon
             }
         };
 
-        static Dictionary<MenuType, string> _menus = new Dictionary<MenuType, string>()
-            {
-                {MenuType.ArrayDataStructures,"Data Structures - Array\n"  +
-                                                "\t1. Configure initial array size\n" +
-                                                "\t2. Insert an item\n" +
-                                                "\t3. Delete an item\n" +
-                                                "\t4. Show the number of items in the array\n" +
-                                                "\t5. Print all items\n" +
-                                                "\t6. Exit\n" }
-            };
+        //static Dictionary<MenuType, string> _menus = new Dictionary<MenuType, string>()
+        //    {
+        //        {MenuType.ArrayDataStructures,"Data Structures - Array\n"  +
+        //                                        "\t1. Configure initial array size\n" +
+        //                                        "\t2. Insert an item\n" +
+        //                                        "\t3. Delete an item\n" +
+        //                                        "\t4. Show the number of items in the array\n" +
+        //                                        "\t5. Print all items\n" +
+        //                                        "\t6. Exit\n" }
+        //    };
+
         
+        static Dictionary<MenuType, string[]> _menus = new Dictionary<MenuType, string[]>()
+        {
+            {
+                MenuType.ArrayDataStructures,new string[] 
+                {
+                    "Data Structures - Array\n",
+                    "\t1. Configure initial array size\n",
+                    "\t2. Insert an item\n",
+                    "\t3. Delete an item\n",
+                    "\t3. Delete an item\n",
+                    "\t4. Show the number of items in the array\n",
+                    "\t5. Print all items\n",
+                    "\t6. Exit\n"
+                }
+            }
+        };
+    
+
         public static void SetMenu(MenuType menuType)
         {
-            _curentMenuType = menuType;
+            CurentMenuType = menuType;
 
-            _startlocation.TryGetValue(_curentMenuType, out _startLocation);
-            _endlocation.TryGetValue(_curentMenuType, out _endLocation);
+            _startlocation.TryGetValue(CurentMenuType, out _startLocation);
+            _endlocation.TryGetValue(CurentMenuType, out _endLocation);
 
-            _startIndicatorLocationDictionary.TryGetValue(_curentMenuType, out _startIndicatorLocation);
+            _startIndicatorLocationDictionary.TryGetValue(CurentMenuType, out _startIndicatorLocation);
             menuIndicator.MoveTo(_startIndicatorLocation, _startIndicatorLocation);
         }
         public static void MoveIndicator()
@@ -76,18 +94,18 @@ namespace Console_Dungeon
             }
 
         }
+        public static void GetStarEndLocations(Location ofsetLocation , out Location locationStart, out Location locationEnd)
+        {
+            locationStart = new(_startLocation.X + ofsetLocation.X, _startLocation.Y + ofsetLocation.Y);
+            locationEnd = new(_endLocation.X + ofsetLocation.X, _endLocation.Y + ofsetLocation.Y) ;
+        }
         public static void GetStarEndLocations(out Location locationStart, out Location locationEnd)
         {
-            locationStart = _startLocation;
+            locationStart = _startLocation ;
             locationEnd = _endLocation;
         }
 
-        public static string GetMenuString()
-        {
-            string str;
-            Menus.TryGetValue(_curentMenuType, out str);
-            return str;
-        }
+        
 
         public static int GetMenuChoice()
         {

@@ -36,14 +36,14 @@ namespace Console_Dungeon
             Console.SetBufferSize(Location.Xmax, Location.Ymax);
             int screenDivaider = (int)Math.Ceiling(Location.Xmax * 0.2);
 
-            _logeScreens = new Location(screenDivaider, Location.Ymax);
+            _logeScreens = new Location(0, 0);
             _screens.Add(Screen.Log, _logeScreens);
-            _logeLocation = new("Log", Elements.DoorVertical,  new(_logeScreens.X, 0), _logeScreens);
+            _logeLocation = new("Log", Elements.DoorVertical,  new(screenDivaider, 0), new(screenDivaider, Location.Ymax));
             EnvaironmentQueue(_logeLocation, Screen.Window);
 
-            _menuScreens = new Location(screenDivaider * 4, Location.Ymax);
+            _menuScreens = new Location(screenDivaider * 4 + 1, 0);
             _screens.Add(Screen.Menu, _menuScreens);
-            _menuLocation = new("Menu", Elements.DoorVertical, new(_menuScreens.X, 0), _menuScreens);
+            _menuLocation = new("Menu", Elements.DoorVertical, new(screenDivaider * 4, 0), new(screenDivaider*4, Location.Ymax));
             EnvaironmentQueue(_menuLocation, Screen.Window);
 
             _mapScreens = new Location(Location.Xmax/2, Location.Ymax/2);
@@ -157,19 +157,23 @@ namespace Console_Dungeon
         }
         private static void RenderMenu()
         {
-            string str = Menu.GetMenuString();
+            string[] strs = Menu.Menus[Menu.CurentMenuType];
             Location locationStart;
             Location locationEnd;
             Location screen;
-            Menu.GetStarEndLocations(out locationStart, out locationEnd);
             _screens.TryGetValue(Screen.Menu, out screen);
-
-            RenderStrin(str, locationStart);
+            Menu.GetStarEndLocations(screen, out locationStart, out locationEnd);
+            foreach (string str in strs)
+            {
+                RenderStrin(str, locationStart);
+            }
+            
         }
         private static void RenderStrin(string str, Location location)
         {
             Console.SetCursorPosition(location.X, location.Y);
             Console.Write(str);
+            
         }
 
 
@@ -194,7 +198,6 @@ namespace Console_Dungeon
                 Erasure(entity.PreviousLocation);
                 RenderEntity(entity);
             }
-
             _entitiesMapQueue.Clear();
         }
 
