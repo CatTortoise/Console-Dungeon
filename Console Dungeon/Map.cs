@@ -28,7 +28,7 @@ namespace Console_Dungeon
 
         private void PopulateMap()
         {
-            _mapEntities = new Entity[1]{ new("P1",new Location(5,5),Elements.Player,0) };
+            _mapEntities = new Entity[1]{ new("P1",true, new Location(5,5),Elements.Player,0) };
             Renderer.EntitiesQueue(_mapEntities[0], Renderer.Screen.Map);
 
         }

@@ -10,7 +10,7 @@ namespace Console_Dungeon
 {
     static class InputManager
     {
-        enum inputType
+        public enum inputType
         {
             Menu,
             Game
@@ -18,11 +18,14 @@ namespace Console_Dungeon
         private static string _inputMessage;
         private static inputType _inputSystem = inputType.Game;
         private static ConsoleKey _keyInput;
+
+        public static inputType InputSystem { get => _inputSystem; set => _inputSystem = value; }
+
         /*+GetKey()*/
         public static Location PlayerInput(Entity entity)
         {
             Location location = entity.Location;
-            switch (_inputSystem)
+            switch (InputSystem)
             {
                 case inputType.Game:
                     PlayerGameInput(ref location);
@@ -43,7 +46,7 @@ namespace Console_Dungeon
             switch (_keyInput)
             {
                 case ConsoleKey.Enter:
-                    _inputSystem = inputType.Menu;
+                    InputSystem = inputType.Menu;
                     break;
                 case ConsoleKey.Escape:
                     //Back or close
@@ -68,6 +71,9 @@ namespace Console_Dungeon
         }
         private static void PlayerMenuInput(ref Location location)
         {
+            Renderer.PrinteMenu();
+            Renderer.EntitiesQueue(Menu.MenuIndicator, Renderer.Screen.Menu);
+            Renderer.Render();
             _keyInput = Console.ReadKey(true).Key;
             switch (_keyInput)
             {
@@ -75,7 +81,8 @@ namespace Console_Dungeon
                     Menu.GetMenuChoice();
                     break;
                 case ConsoleKey.Escape:
-                    _inputSystem = inputType.Game;
+                    InputSystem = inputType.Game;
+                    Menu.SetMenu(Menu.MenuType.Empty);
                     break;
                 case ConsoleKey.UpArrow:
                     location.Y += -1;
@@ -87,8 +94,7 @@ namespace Console_Dungeon
                     PlayerMenuInput(ref location);
                     break;
             }
-            Renderer.PrinteMenu();
-            Renderer.EntitiesQueue(Menu.MenuIndicator,Renderer.Screen.Menu);
+            
         }
     }
 }

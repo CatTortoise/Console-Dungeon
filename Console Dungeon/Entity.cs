@@ -26,18 +26,22 @@ namespace Console_Dungeon
         private int _toughness;
         private bool _isNotQueued;
 
-
-        public Entity(string name, Location location, Element.Elements elementCode , int id)
+        
+        public Entity(string name, bool isPlayer, Location location, Element.Elements elementCode , int id)
         {
             Name = name;
+            IsPlayer = isPlayer;
+            IsAlive = true;
             Location = location;
             PreviousLocation = Location;
             ElementCode = elementCode;
             Id = id;
         }
-        public Entity(string name, Location location, Location previousLocation, Element.Elements elementCode, int id)
+        public Entity(string name, bool isPlayer, Location location, Location previousLocation, Element.Elements elementCode, int id)
         {
             Name = name;
+            IsPlayer = isPlayer;
+            IsAlive = true;
             Location = location;
             PreviousLocation = previousLocation;
             ElementCode = elementCode;
@@ -48,7 +52,8 @@ namespace Console_Dungeon
         public Location PreviousLocation { get => _previousLocation; private set => _previousLocation = value; }
         public Element.Elements ElementCode { get => _ElementCode; private set => _ElementCode = value; }
         public int Id { get => _id; set => _id = value; }
-        
+        public bool IsPlayer { get => _IsPlayer; private set => _IsPlayer = value; }
+        public bool IsAlive { get => _isAlive; set => _isAlive = value; }
 
         public void MoveTo(Location moveTo)
         {

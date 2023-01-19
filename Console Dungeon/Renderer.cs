@@ -17,7 +17,7 @@ namespace Console_Dungeon
             Menu
         }
         private static Envaironment _logeLocation;
-        private static Dictionary<Screen, Location> _screens = new Dictionary<Screen, Location>();
+        private static Dictionary<Screen, Envaironment> _screens = new Dictionary<Screen, Envaironment>();
         private static Envaironment _menuLocation;
         private static Queue<Entity> _entitiesMapQueue = new Queue<Entity>(10);
 
@@ -25,7 +25,7 @@ namespace Console_Dungeon
         private static Queue<Envaironment> _logeScreenQueue = new Queue<Envaironment>(10);
         private static Queue<Envaironment> _MenuScreenQueue = new Queue<Envaironment>(10);
         private static bool _printeMenu = false;
-
+       
 
         public static void SetScreens()
         {
@@ -35,19 +35,20 @@ namespace Console_Dungeon
             Console.SetWindowSize(Location.Xmax, Location.Ymax);
             Console.SetBufferSize(Location.Xmax, Location.Ymax);
             int screenDivaider = (int)Math.Ceiling(Location.Xmax * 0.2);
+            
+            _screens.Add(Screen.Window, new("Window", Elements.Empty, new(), new(Location.Xmax, Location.Ymax)));
 
             _logeScreens = new Location(0, 0);
-            _screens.Add(Screen.Log, _logeScreens);
-            _logeLocation = new("Log", Elements.DoorVertical,  new(screenDivaider, 0), new(screenDivaider, Location.Ymax));
-            EnvaironmentQueue(_logeLocation, Screen.Window);
+            _screens.Add(Screen.Log,new( "Log",Elements.DoorVertical,  new(screenDivaider, 0), new(screenDivaider, Location.Ymax)));
+            EnvaironmentQueue(_screens[Screen.Log], Screen.Window);
 
             _menuScreens = new Location(screenDivaider * 4 + 1, 0);
-            _screens.Add(Screen.Menu, _menuScreens);
-            _menuLocation = new("Menu", Elements.DoorVertical, new(screenDivaider * 4, 0), new(screenDivaider*4, Location.Ymax));
-            EnvaironmentQueue(_menuLocation, Screen.Window);
+            _screens.Add(Screen.Menu, new("Menu", Elements.DoorVertical, new(screenDivaider * 4, 0), new(screenDivaider*4, Location.Ymax)));
+            EnvaironmentQueue(_screens[Screen.Menu], Screen.Window);
 
             _mapScreens = new Location(Location.Xmax/2, Location.Ymax/2);
-            _screens.Add(Screen.Map, _mapScreens);
+            _screens.Add(Screen.Map, new("Map", Elements.Empty, new(_screens[Screen.Log].LocationBottomRight.X, 0), new(_screens[Screen.Menu].LocationTopLeft.X, Location.Ymax)));
+            EnvaironmentQueue(_screens[Screen.Map], Screen.Window);
         }
 
 
@@ -59,10 +60,10 @@ namespace Console_Dungeon
         public static bool EntitiesQueue(Entity entity, Screen screen)
         {
             Entity EntityForQueue; 
-            Location res;
-            _screens.TryGetValue(screen, out res);
+            Location res = _screens[screen].LocationTopLeft;
             EntityForQueue = new(
                 $"{entity.Name} for Queue",
+                false,
                 new(res.X + entity.Location.X, res.Y + entity.Location.Y),
                 new(res.X + entity.PreviousLocation.X, res.Y + entity.PreviousLocation.Y),
                 entity.ElementCode, entity.Id
@@ -73,8 +74,7 @@ namespace Console_Dungeon
         public static void EnvaironmentQueue(Envaironment envaironment,Screen screen)
         {
             Envaironment envaironmentForQueue = new($"{envaironment.Name} for Queue", envaironment.ElementCode, envaironment.LocationTopLeft, envaironment.LocationBottomRight);
-            Location res;
-            _screens.TryGetValue(screen, out res);
+            Location res = _screens[screen].LocationTopLeft;
             res.X += envaironment.LocationTopLeft.X;
             res.Y += envaironment.LocationTopLeft.Y;
             envaironmentForQueue.ChangeLocation(res);
@@ -160,18 +160,18 @@ namespace Console_Dungeon
             string[] strs = Menu.Menus[Menu.CurentMenuType];
             Location locationStart;
             Location locationEnd;
-            Location screen;
-            _screens.TryGetValue(Screen.Menu, out screen);
-            Menu.GetStarEndLocations(screen, out locationStart, out locationEnd);
+            Menu.GetStarEndLocations(_screens[Screen.Menu].LocationTopLeft, out locationStart, out locationEnd);
             foreach (string str in strs)
             {
-                RenderStrin(str, locationStart);
+                RenderStrin(str, locationStart,Screen.Menu);
+                locationStart.Y++;
             }
             
         }
-        private static void RenderStrin(string str, Location location)
+        private static void RenderStrin(string str, Location location, Screen screen)
         {
             Console.SetCursorPosition(location.X, location.Y);
+            string WriteStr = str;
             Console.Write(str);
             
         }

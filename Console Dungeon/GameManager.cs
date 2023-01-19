@@ -9,14 +9,14 @@ namespace Console_Dungeon
     static class GameManager
     {
         private static Map[] _maps = new Map[10];
-
+        
 
         public static void StartConsoleDungeon()
         {
             Console.CursorVisible = false;
             Renderer.SetScreens();
             Menu.SetMenu(Menu.MenuType.ArrayDataStructures);
-            Renderer.PrinteMenu();
+            //Renderer.PrinteMenu();
             _maps[0] = new Map();
             Renderer.Render();
             GameLoop();
@@ -28,7 +28,14 @@ namespace Console_Dungeon
             {
                 foreach(Entity entity in _maps[0].mapEntities)
                 {
-                    _maps[0].MoveTo(InputManager.PlayerInput(entity), entity);
+                    if (InputManager.InputSystem == InputManager.inputType.Game)
+                    {
+                        _maps[0].MoveTo(InputManager.PlayerInput(entity), entity);
+                    }
+                    while (InputManager.InputSystem == InputManager.inputType.Menu)
+                    {
+                        Menu.MoveIndicator();
+                    }
                 }
                 Renderer.Render();
             } while(true);
