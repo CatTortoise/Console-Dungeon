@@ -25,15 +25,18 @@ namespace Console_Dungeon
         public static Location PlayerInput(Entity entity)
         {
             Location location = entity.Location;
-            switch (InputSystem)
+            if (entity.IsPlayer)
             {
-                case inputType.Game:
-                    PlayerGameInput(ref location);
-                    break;
-                case inputType.Menu:
-                    location = Menu.MenuIndicator.Location;
-                    PlayerMenuInput(ref location);
-                    break;
+                switch (InputSystem)
+                {
+                    case inputType.Game:
+                        PlayerGameInput(ref location);
+                        break;
+                    case inputType.Menu:
+                        location = Menu.MenuIndicator.Location;
+                        PlayerMenuInput(ref location);
+                        break;
+                }
             }
             return location;
 

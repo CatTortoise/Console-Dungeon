@@ -8,6 +8,12 @@ namespace Console_Dungeon
 {
     class Entity
     {
+        public enum Equipment
+        {
+            Shield,
+            Weapon
+        }
+
         private string _name;
         private Element.Elements _ElementCode;
         private ConsoleColor _entityColor;
@@ -16,8 +22,8 @@ namespace Console_Dungeon
         private int _id;
         private bool _IsPlayer;
         private bool _isAlive;
-        private List<Equipment> _equipment;
-
+        private Shield _shield;
+        private Weapon _weapon;
 
         private int _maxHP;
         private float _currentHP;
@@ -79,13 +85,13 @@ namespace Console_Dungeon
 
 
         //for Renderer
-        public Entity(string name, bool isPlayer, Location location, Element.Elements elementCode, int id)
+        public Entity(string name, bool isPlayer, Location location, Location previousLocation, Element.Elements elementCode, int id)
         {
             Name = name;
             IsPlayer = isPlayer;
             IsAlive = true;
             Location = location;
-            PreviousLocation = Location;
+            PreviousLocation = previousLocation;
             ElementCode = elementCode;
             Id = id;
         }
@@ -141,15 +147,9 @@ namespace Console_Dungeon
         public float CurrentEnergy { get => _currentEnergy; private set => _currentEnergy = value; }
         public int Senses { get => _senses; private set => _senses = value; }
         public int Toughness { get => _toughness; private set => _toughness = value; }
-
-        /*
-        private Shield _shield;
         public Shield Shield { get => _shield; private set => _shield = value; }
-        private bool _isShielding;
-
-        private Weapon _weapon;
         public Weapon Weapon { get => _weapon; private set => _weapon = value; }
-        */
+
 
 
 

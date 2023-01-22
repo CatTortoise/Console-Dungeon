@@ -21,12 +21,13 @@ namespace Console_Dungeon
         public static Entity Target;
         public static int Heal;
         public static int IncreaseAmount;
+        public static Entity.Equipment Euipment;
 
-        static public void UpgradEquipment(Entity unit,int increaseAmount, Entity.Equipment equipment)
+        static public void UpgradEquipment(Entity entity, int increaseAmount, Entity.Equipment equipment)
         {
             IncreaseAmount = increaseAmount;
             Euipment = equipment;
-            unit.ActionsSelection(Actions.UpgradEquipment);
+            entity.ActionsSelection(Actions.UpgradEquipment);
         }
 
         static public void DealDamage(Entity target, Entity attacker)

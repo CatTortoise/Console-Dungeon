@@ -66,7 +66,8 @@ namespace Console_Dungeon
                 false,
                 new(res.X + entity.Location.X, res.Y + entity.Location.Y),
                 new(res.X + entity.PreviousLocation.X, res.Y + entity.PreviousLocation.Y),
-                entity.ElementCode, entity.Id
+                entity.ElementCode, 
+                entity.Id
                 );
             _entitiesMapQueue.Enqueue(EntityForQueue);
             return true;
