@@ -96,6 +96,7 @@ namespace Console_Dungeon
                     break;
                 case ElementsTayp.Entities:
                     collisions = true;
+                    ToTheDeath.Fight(_mapEntities);
                     break;
                 case ElementsTayp.Interruptibles:
                     break;

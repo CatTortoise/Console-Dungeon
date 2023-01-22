@@ -75,10 +75,10 @@ namespace Console_Dungeon
 
 
         private bool _isBusy;
-        private Action.Actions _unitAction;
-        public Action.Actions UnitAction { get => _unitAction; private set => _unitAction = value; }
+        private Action.Actions _EntityAction;
+        public Action.Actions EntityAction { get => _EntityAction; private set => _EntityAction = value; }
 
-        public string GetUnitStats()
+        public string GetEntityStats()
         {
             return $"{Name} HP: {CurrentHP:#,0.##}/{MaxHP:#,0.##}, Damage: {Weapon.Damage}, Accuracy: {Weapon.Accuracy},Defense: {Shield.Defense}, Evasion: {MinEvasion}/{MaxEvasion}";
         }
@@ -94,6 +94,9 @@ namespace Console_Dungeon
             PreviousLocation = previousLocation;
             ElementCode = elementCode;
             Id = id;
+            _entityColor = ConsoleColor.White;
+            Weapon = new();
+            Shield = new();
         }
         //for Map
         public Entity(string name, bool isPlayer,int maxHP ,int strength,int energy, int reactionSpeed,int senses , int toughness,Location location, Location previousLocation, Element.Elements elementCode, ConsoleColor Color, int id)
@@ -107,7 +110,7 @@ namespace Console_Dungeon
             Id = id;
             _isShielding = false;
             _isBusy = false;
-            UnitAction = Action.Actions.GoIdol;
+            EntityAction = Action.Actions.GoIdol;
             Senses = senses;
             Toughness = toughness;
             MaxHP = maxHP;
@@ -120,8 +123,11 @@ namespace Console_Dungeon
             EntityColor = Color;
             _isShielding = false;
             _isBusy = false;
-            UnitAction = Action.Actions.GoIdol;
+            EntityAction = Action.Actions.GoIdol;
             _isNotQueued = false;
+            _entityColor = ConsoleColor.White;
+            Weapon = new();
+            Shield = new();
 
         }
         private void CalculateEvasion()
@@ -172,16 +178,16 @@ namespace Console_Dungeon
                         UpgradEquipment(Action.IncreaseAmount, Action.Euipment);
                         break;
                     default:
-                        UnitAction = Action.Actions.GoIdol;
+                        EntityAction = Action.Actions.GoIdol;
                         return;
                 }
-                UnitAction = action;
+                EntityAction = action;
             }
 
         }
 
         //3)
-        #region Unit stats functions 
+        #region Entity stats functions 
         /// <summary>
         /// damageDealt is reduced by shield percentage
         /// </summary>
@@ -245,7 +251,7 @@ namespace Console_Dungeon
         {
             if (CurrentHP <= 0)
             {
-                UnitAction = Action.Actions.Dead;
+                EntityAction = Action.Actions.Dead;
                 CurrentHP = 0;
                 return true;
             }
@@ -257,8 +263,14 @@ namespace Console_Dungeon
         }
         #endregion
 
-
-        //4)
+        private void EquipEquipment(Shield shield)
+        {
+            Shield = shield;
+        }
+        private void EquipEquipment(Weapon weapon)
+        {
+            Weapon = weapon;
+        }
         /// <summary>
         /// Uses the enume Equipment to select the corresponding stats to increase
         /// </summary>
