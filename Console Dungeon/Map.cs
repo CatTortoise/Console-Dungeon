@@ -19,7 +19,7 @@ namespace Console_Dungeon
         public Map()
         {
             GenerateMap();
-            PopulateMap();
+            PopulateMap(10);
             GenerateCollisionsMap();
             LoadeAllMapElements();
         }
@@ -27,20 +27,27 @@ namespace Console_Dungeon
         public Entity[] mapEntities { get => _mapEntities; private set => _mapEntities = value; }
         public Location MapSize { get => _mapSize; private set => _mapSize = value; }
 
-        private void PopulateMap()
+        private void PopulateMap(int number)
         {
-            _mapEntities = new Entity[] { new("P1",true, new Location(5,5), new Location(5, 5), Elements.Player,0),
-                                            new("g1", false, new Location(7, 5), new Location(7, 5), Elements.Goblin, 1) };
-
+            _mapEntities = new Entity[number];
+            for (int i = 0; i < 2; i++)
+            {
+                _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Player, this));
+            }
+            for (int i = 2; i < number; i++)
+            {
+                _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Goblin, this));
+            }
+            
         }
 
         public void MoveTo(Location location,Entity entity)
         {
             //Checks if love is possible
-            if (!entity.Location.CompareLocations(location) && !CheckCollision(location))
+            if (!entity.Location.CompareLocations(location) && !CheckCollision(location, entity))
             {
                 _mapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Empty;
-                mapEntities[entity.Id].MoveTo(location);
+                entity.MoveTo(location);
                 Renderer.EntitiesQueue(entity, Renderer.Screen.Map);
                 GenerateCollisionsMap();
             }
@@ -98,8 +105,9 @@ namespace Console_Dungeon
         }
 
 
-        private bool CheckCollision(Location location)
+        private bool CheckCollision(Location location,Entity entity)
         {
+
             bool collisions = false;
             switch (_mapCollisions[location.X, location.Y])
             {
@@ -109,9 +117,19 @@ namespace Console_Dungeon
                     collisions = true;
                     break;
                 case ElementsTayp.Entities:
-                    collisions = true;
-                    ToTheDeath.Fight(_mapEntities);
-                    LoadeAllMapElements();
+                    
+                    foreach (Entity other in _mapEntities.Where<Entity>(checkEntity => checkEntity.Location.CompareLocations(location)))
+                    {
+                        if (other.CollidedWithHostile(entity.ElementCode))
+                        {
+                            collisions = true;
+                        }
+                    }
+                    if (collisions)
+                    {
+                        ToTheDeath.Fight(EntitiesCollisions(location));
+                        LoadeAllMapElements();
+                    }
                     break;
                 case ElementsTayp.Interruptibles:
                     break;
@@ -119,6 +137,10 @@ namespace Console_Dungeon
             return collisions;
         }
 
+        private Entity[] EntitiesCollisions(Location location)
+        {
+            return _mapEntities.Where<Entity>(entiy => entiy.Location.CompareLocations(location)).ToArray();
+        }
     }
 }
 

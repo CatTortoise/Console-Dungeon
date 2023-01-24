@@ -82,7 +82,7 @@ namespace Console_Dungeon
                 { Elements.DoorHorizontal, ConsoleColor.Gray },
                 { Elements.VisibleArea, ConsoleColor.DarkGray },
                 { Elements.Player, ConsoleColor.White },
-                { Elements.Goblin, (ConsoleColor.Green },
+                { Elements.Goblin, ConsoleColor.Green },
                 { Elements.Hob_Goblin, ConsoleColor.DarkGreen },
                 { Elements.Minatore, ConsoleColor.Red },
                 { Elements.Mimic, ConsoleColor.Yellow },
@@ -94,25 +94,13 @@ namespace Console_Dungeon
                 { Elements.MenuIndicator, ConsoleColor.White }
             };
 
-        static private Dictionary<Elements, > _EntitiesStatsDictionary = new Dictionary<Elements, ConsoleColor>()
-            {
-                { Elements.NonVisibleArea,ConsoleColor.White },
-                { Elements.Wall, ConsoleColor.White },
-                { Elements.DoorVertical, ConsoleColor.Gray },
-                { Elements.DoorHorizontal, ConsoleColor.Gray },
-                { Elements.VisibleArea, ConsoleColor.DarkGray },
-                { Elements.Player, ConsoleColor.White },
-                { Elements.Goblin, (ConsoleColor.Green },
-                { Elements.Hob_Goblin, ConsoleColor.DarkGreen },
-                { Elements.Minatore, ConsoleColor.Red },
-                { Elements.Mimic, ConsoleColor.Yellow },
-                { Elements.TrapArmed, ConsoleColor.Yellow },
-                { Elements.TrapDisarmed, ConsoleColor.DarkYellow },
-                { Elements.TreasureChest, ConsoleColor.Yellow },
-                { Elements.Item, ConsoleColor.Blue },
-                { Elements.Empty,ConsoleColor.White },
-                { Elements.MenuIndicator, ConsoleColor.White }
-            };
+
+    //,
+    //            { Elements.Goblin,  },
+    //            { Elements.Hob_Goblin, },
+    //            { Elements.Minatore,  },
+    //            { Elements.Mimic,  }
+    //        };
 
 
         public static Dictionary<Elements, char> ElementDictionary { get => _elementDictionary; private set => _elementDictionary = value; }

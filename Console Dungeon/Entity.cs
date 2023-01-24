@@ -130,6 +130,37 @@ namespace Console_Dungeon
             Shield = new();
 
         }
+        public Entity(Entity entity)
+        {
+            Name = entity.Name;
+            IsPlayer = entity.IsPlayer;
+            IsAlive = true;
+            Location = entity.Location;
+            PreviousLocation = Location;
+            ElementCode = entity.ElementCode;
+            Id = entity.Id;
+            _isShielding = false;
+            _isBusy = false;
+            EntityAction = Action.Actions.GoIdol;
+            Senses = entity.Senses;
+            Toughness = entity.Toughness;
+            MaxHP = entity.MaxHP;
+            _currentHP = MaxHP;
+            Strength = entity.Strength;
+            MaxEnergy = entity.MaxEnergy;
+            CurrentEnergy = MaxEnergy;
+            ReactionSpeed = entity.ReactionSpeed;
+            CalculateEvasion();
+            EntityColor = entity.EntityColor;
+            _isShielding = false;
+            _isBusy = false;
+            EntityAction = Action.Actions.GoIdol;
+            _isNotQueued = false;
+            _entityColor = ConsoleColor.White;
+            Weapon = new();
+            Shield = new();
+
+        }
         private void CalculateEvasion()
         {
             MaxEvasion = ReactionSpeed;
@@ -155,9 +186,7 @@ namespace Console_Dungeon
         public int Toughness { get => _toughness; private set => _toughness = value; }
         public Shield Shield { get => _shield; private set => _shield = value; }
         public Weapon Weapon { get => _weapon; private set => _weapon = value; }
-
-
-
+        
 
         public void ActionsSelection(Action.Actions action)
         {
@@ -303,6 +332,10 @@ namespace Console_Dungeon
             Location = moveTo;
         }
 
+        public bool CollidedWithHostile(Element.Elements element)
+        {
+            return ElementCode != element;
+        }
     } 
 }
 
