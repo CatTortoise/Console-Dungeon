@@ -99,13 +99,13 @@ namespace Console_Dungeon
             Shield = new();
         }
         //for Map
-        public Entity(string name, bool isPlayer,int maxHP ,int strength,int energy, int reactionSpeed,int senses , int toughness,Location location, Location previousLocation, Element.Elements elementCode, ConsoleColor Color, int id)
+        public Entity(string name, bool isPlayer,int maxHP ,int strength,int energy, int reactionSpeed,int senses , int toughness,Location location, Element.Elements elementCode, ConsoleColor Color, int id)
         {
             Name = name;
             IsPlayer = isPlayer;
             IsAlive = true;
             Location = location;
-            PreviousLocation = previousLocation;
+            PreviousLocation = Location;
             ElementCode = elementCode;
             Id = id;
             _isShielding = false;
