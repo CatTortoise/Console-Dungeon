@@ -59,27 +59,34 @@ namespace Console_Dungeon
         }
         public static bool EntitiesQueue(Entity entity, Screen screen)
         {
-            Entity EntityForQueue; 
-            Location res = _screens[screen].LocationTopLeft;
-            EntityForQueue = new(
-                $"{entity.Name} for Queue",
-                false,
-                new(res.X + entity.Location.X, res.Y + entity.Location.Y),
-                new(res.X + entity.PreviousLocation.X, res.Y + entity.PreviousLocation.Y),
-                entity.ElementCode, 
-                entity.Id
-                );
-            _entitiesMapQueue.Enqueue(EntityForQueue);
-            return true;
+            if (entity != null && entity.IsAlive)
+            {
+                Entity EntityForQueue;
+                Location res = _screens[screen].LocationTopLeft;
+                EntityForQueue = new(
+                    $"{entity.Name} for Queue",
+                    false,
+                    new(res.X + entity.Location.X, res.Y + entity.Location.Y),
+                    new(res.X + entity.PreviousLocation.X, res.Y + entity.PreviousLocation.Y),
+                    entity.ElementCode,
+                    entity.Id
+                    );
+                _entitiesMapQueue.Enqueue(EntityForQueue);
+                return true;
+            }
+            return false;
         }
         public static void EnvaironmentQueue(Envaironment envaironment,Screen screen)
         {
-            Envaironment envaironmentForQueue = new($"{envaironment.Name} for Queue", envaironment.ElementCode, envaironment.LocationTopLeft, envaironment.LocationBottomRight);
-            Location res = _screens[screen].LocationTopLeft;
-            res.X += envaironment.LocationTopLeft.X;
-            res.Y += envaironment.LocationTopLeft.Y;
-            envaironmentForQueue.ChangeLocation(res);
-            _envaironmentsMapQueue.Enqueue(envaironmentForQueue);
+            if (envaironment != null)
+            {
+                Envaironment envaironmentForQueue = new($"{envaironment.Name} for Queue", envaironment.ElementCode, envaironment.LocationTopLeft, envaironment.LocationBottomRight);
+                Location res = _screens[screen].LocationTopLeft;
+                res.X += envaironment.LocationTopLeft.X;
+                res.Y += envaironment.LocationTopLeft.Y;
+                envaironmentForQueue.ChangeLocation(res);
+                _envaironmentsMapQueue.Enqueue(envaironmentForQueue);
+            }
         }
         #endregion 
 

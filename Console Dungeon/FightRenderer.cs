@@ -79,20 +79,7 @@ namespace Console_Dungeon
             return result;
         }
 
-        public static void Winner(Entity Entity)
-        {
-            if (!Entity.IsDead())
-            {
-                ConsoleColor color = Console.BackgroundColor;
-                VisualSeparator();
-                PrintColoredMessage("**Winner**\n", ConsoleColor.Yellow);
-                PrintColoredMessage($"**Team: {Entity.EntityColor}**\n", Entity.EntityColor);
-                PrintColoredMessage("**Winner**\n", ConsoleColor.Yellow);
-                VisualSeparator();
-                Console.WriteLine("Press any key to continue ");
-                Console.ReadKey();
-            }
-        }
+
         public static void InputErrer(string message)
         {
             ConsoleColor BackgroundColour = Console.BackgroundColor;

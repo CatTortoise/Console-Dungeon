@@ -11,25 +11,6 @@ namespace Console_Dungeon
     {
         public static void Fight(Entity[] entities)
         {
-            
-            //Entity[] player = new Entity[entities.Length];
-            //Entity[] npc = new Entity[entities.Length];
-            //int playerIndex = 0;
-            //int npcIndex = 0;
-            //foreach (Entity entity in entities)
-            //{
-            //    if (entity.IsPlayer)
-            //    {
-            //        player[playerIndex] = entity;
-            //        playerIndex++;
-            //    }
-            //    else
-            //    {
-            //        npc[npcIndex] = entity;
-            //        npcIndex++;
-            //    }
-            //}
-            //player = player;
             FightGameLoop(entities.Where<Entity>(entiy => entiy != null && entiy.IsPlayer).ToArray(), entities.Where<Entity>(entiy => entiy != null && !entiy.IsPlayer).ToArray());
         }
 
@@ -37,17 +18,13 @@ namespace Console_Dungeon
         {
             bool isNewFightLoop = true;
             bool fightOver = false;
-            int numberOfEntitys = 4;
-            do
-            {
+
                 fightOver = false;
                 isNewFightLoop = true;
                 while (!fightOver)
                 {
                     if (isNewFightLoop)
                     {
-                        //InstantiateEntitys(player, "Entity", 10, ConsoleColor.Blue);
-                        //InstantiateEntitys(npc, "Minotaur", 5, ConsoleColor.Red);
                         isNewFightLoop = false;
                         Console.Clear();
                     }
@@ -90,21 +67,13 @@ namespace Console_Dungeon
                     {
                         PrintColoredMessage($"Press any key to continue\n", ConsoleColor.Yellow);
                         Console.ReadKey();
-                        Console.Clear();
+                        
                         FightRenderer.ResetEntitysAction(player);
                         FightRenderer.ResetEntitysAction(npc);
                     }
-                }
-                if (fightOver)
-                {
-                    Console.Clear();
-                    FightRenderer.Winner(player[0]);
-                    FightRenderer.Winner(npc[0]);
-                }
-                Array.Clear(player);
-                Array.Clear(npc);
+                Console.Clear();
+            }
 
-            } while (!ExitCheck(""));
         }
         private static void AutomaticActionSelection(Entity[] acters, Entity[] targets)
         {
@@ -114,20 +83,6 @@ namespace Console_Dungeon
                 Act(action, Entity, targets,true);
             }   
         }
-
-        //private static Entity[] InstantiateEntitys(Entity[] player, string name, int maxHP, ConsoleColor color)
-        //{
-
-        //    //for (int i = 0; i < player.Length; i++)
-        //    //{
-        //    //    int maxEvasion = Random.Shared.Next(1, 5);
-        //    //    int minEvasion = Random.Shared.Next(maxEvasion);
-        //    //    Shield shield = new Shield();
-        //    //    Weapon weapon = new Weapon();
-        //    //    player[i] = new($"ID:({i + 1}) {name}_{i + 1}", maxHP, shield, weapon, minEvasion, maxEvasion, color);
-        //    //}
-        //    //return player;
-        //}
 
         private static int AutomaticTarget(Entity[] target)
         {
@@ -162,7 +117,7 @@ namespace Console_Dungeon
                     Action.ShieldYourself(acter);
                     break;
                 case Action.Actions.Heal:
-                    Action.UseHeal(acter, 10);
+                    Action.UseHeal(acter, (int)Math.Ceiling(acter.MaxHP * 0.2f));
                     break;
                 case Action.Actions.UpgradEquipment:
                     Action.UpgradEquipment(acter, 2, Entity.Equipment.Weapon);

@@ -21,7 +21,7 @@ namespace Console_Dungeon
         private Location _location;
         private int _id;
         private bool _IsPlayer;
-        private bool _isAlive;
+        private bool _isAlive = true;
         private Shield _shield;
         private Weapon _weapon;
 
@@ -249,15 +249,17 @@ namespace Console_Dungeon
         /// <returns></returns>
         public bool IsDead()
         {
+            
             if (CurrentHP <= 0)
             {
                 EntityAction = Action.Actions.Dead;
                 CurrentHP = 0;
-                return true;
+                IsAlive = false;
+                return !_isAlive;
             }
             else
             {
-                return false;
+                return !_isAlive;
             }
 
         }

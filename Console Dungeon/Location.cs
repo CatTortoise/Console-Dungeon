@@ -96,6 +96,10 @@ namespace Console_Dungeon
             this.Y = 0;
         }
 
+        public bool CompareLocations(Location compareToLocation) 
+        { 
+            return this.X == compareToLocation.X && this.Y == compareToLocation.Y;
+        }
 
     }		
 

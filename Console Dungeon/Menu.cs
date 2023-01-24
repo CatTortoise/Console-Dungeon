@@ -51,17 +51,6 @@ namespace Console_Dungeon
             }
         };
 
-        //static Dictionary<MenuType, string> _menus = new Dictionary<MenuType, string>()
-        //    {
-        //        {MenuType.ArrayDataStructures,"Data Structures - Array\n"  +
-        //                                        "1. Configure initial array size\n" +
-        //                                        "\t2. Insert an item\n" +
-        //                                        "\t3. Delete an item\n" +
-        //                                        "\t4. Show the number of items in the array\n" +
-        //                                        "\t5. Print all items\n" +
-        //                                        "\t6. Exit\n" }
-        //    };
-
         
         static Dictionary<MenuType, string[]> _menus = new Dictionary<MenuType, string[]>()
         {
