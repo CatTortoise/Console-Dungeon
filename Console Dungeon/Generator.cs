@@ -36,9 +36,9 @@ namespace Console_Dungeon
             Location location = new
                 (
                 Random.Shared.Next(
-                    map.MapEnvironments[0].LocationTopLeft.X+1, map.MapEnvironments[0].LocationBottomRight.X), 
+                    map.MapBorder.LocationTopLeft.X+1, map.MapBorder.LocationBottomRight.X), 
                 Random.Shared.Next(
-                    map.MapEnvironments[0].LocationTopLeft.Y + 1, map.MapEnvironments[0].LocationBottomRight.Y)
+                    map.MapBorder.LocationTopLeft.Y + 1, map.MapBorder.LocationBottomRight.Y)
                 );
             //Location location = new(Random.Shared.Next(1, map.MapSize.X), Random.Shared.Next(1, map.MapSize.Y));
 
@@ -290,9 +290,9 @@ namespace Console_Dungeon
         }
         #endregion
 
-        public static Envaironment GeneratEnvaironment(Element.Elements element, Location maxEnvaironmentSize, Location minEnvaironmentSize, Map map)
+        public static Envaironment GeneratEnvaironment(Element.Elements element, int minEnvaironmentSize, int maxEnvaironmentSize, Map map)
         {
-            Location[] locations = GeneratEnvaironmentLocation(element, maxEnvaironmentSize, minEnvaironmentSize, map);
+            Location[] locations = GeneratEnvaironmentLocation(element, minEnvaironmentSize, maxEnvaironmentSize, map);
             Envaironment envaironment = new
                 (
                 $"{element} {id}",
@@ -313,7 +313,7 @@ namespace Console_Dungeon
         /// <param name="minEnvaironmentSize"></param>
         /// <param name="map"></param>
         /// <returns></returns>
-        private static Location[] GeneratEnvaironmentLocation(Element.Elements element, Location minEnvaironmentSize, Location maxEnvaironmentSize,  Map map)
+        private static Location[] GeneratEnvaironmentLocation(Element.Elements element, int minEnvaironmentSize, int maxEnvaironmentSize,  Map map)
         {
             Location topLeftLocation = new();
             Location bottomRightLocation = new();
@@ -322,33 +322,58 @@ namespace Console_Dungeon
                 case Element.Elements.Wall:
                     do
                     {
-                        if (map.MapEnvironments[0] == null)
+                        if (map.MapBorder == null)
                         {
-                            topLeftLocation = new(Random.Shared.Next(0, map.MapSize.X - minEnvaironmentSize.X), Random.Shared.Next(0, map.MapSize.Y - minEnvaironmentSize.Y));
-                            bottomRightLocation = new(Random.Shared.Next(topLeftLocation.X, topLeftLocation.X + maxEnvaironmentSize.X), Random.Shared.Next(topLeftLocation.Y, topLeftLocation.Y + maxEnvaironmentSize.Y));
+                            topLeftLocation = new(0, 0);
                         }
                         else
                         {
                             topLeftLocation = new(
                                                 Random.Shared.Next(
-                                                    map.MapEnvironments[0].LocationTopLeft.X, map.MapEnvironments[0].LocationBottomRight.X - minEnvaironmentSize.X),
+                                                    map.MapBorder.LocationTopLeft.X, map.MapBorder.LocationBottomRight.X - minEnvaironmentSize),
                                                 Random.Shared.Next(
-                                                    map.MapEnvironments[0].LocationTopLeft.Y + 1, map.MapEnvironments[0].LocationBottomRight.Y - minEnvaironmentSize.Y)
+                                                    map.MapBorder.LocationTopLeft.Y, map.MapBorder.LocationBottomRight.Y - minEnvaironmentSize)
                                                 );
-                            bottomRightLocation = new(
-                                                Random.Shared.Next(topLeftLocation.X, topLeftLocation.X + maxEnvaironmentSize.X), 
-                                                Random.Shared.Next(topLeftLocation.Y, topLeftLocation.Y + maxEnvaironmentSize.Y));
                         }
-                    } while (!(bottomRightLocation.X <= map.MapSize.X && bottomRightLocation.Y <= map.MapSize.Y));
+                        bottomRightLocation = new(
+                                                Random.Shared.Next(topLeftLocation.X + minEnvaironmentSize, topLeftLocation.X + maxEnvaironmentSize),
+                                                Random.Shared.Next(topLeftLocation.Y + minEnvaironmentSize, topLeftLocation.Y + maxEnvaironmentSize));
+                    } while (!(bottomRightLocation.X <= map.MapSize.X &&
+                                bottomRightLocation.Y <= map.MapSize.Y &&
+                                ChecksIfLocationIsAvailable(topLeftLocation, bottomRightLocation, map)));
                     break;
             }
-
-
             return new Location[] { topLeftLocation , bottomRightLocation };
         }
         private static bool ChecksIfLocationIsAvailable(Location location , Map map)
         {
             return map.MapCollisions[location.X,location.Y] == Element.ElementsTayp.Empty;
+        }
+
+        private static bool ChecksIfLocationIsAvailable(Location TopLeft, Location BottomRight, Map map)
+        {
+            bool IsAvailable = true;
+            if (map.MapCollisions != null)
+            {
+                for (int i = TopLeft.X; i < BottomRight.X; i++)
+                {
+                    if (map.MapCollisions[i, TopLeft.Y] != Element.ElementsTayp.Empty ||
+                        map.MapCollisions[i, BottomRight.Y] != Element.ElementsTayp.Empty)
+                    {
+                        return IsAvailable = false ;
+                    }
+
+                }
+                for (int i = TopLeft.Y; i < BottomRight.Y; i++)
+                {
+                    if (map.MapCollisions[TopLeft.X, i] != Element.ElementsTayp.Empty ||
+                        map.MapCollisions[TopLeft.X, i] != Element.ElementsTayp.Empty)
+                    {
+                        return IsAvailable = false; 
+                    }
+                }
+            }
+            return IsAvailable;
         }
     }
 }

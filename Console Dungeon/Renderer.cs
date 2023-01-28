@@ -30,7 +30,6 @@ namespace Console_Dungeon
         public static void SetScreens()
         {
             Location _mapScreens;
-            Location _logeScreens;
             Location _menuScreens;
             Console.SetWindowSize(Location.Xmax, Location.Ymax);
             Console.SetBufferSize(Location.Xmax, Location.Ymax);
@@ -38,17 +37,31 @@ namespace Console_Dungeon
             
             _screens.Add(Screen.Window, new("Window", Elements.Empty, new(), new(Location.Xmax, Location.Ymax)));
 
-            _logeScreens = new Location(0, 0);
-            _screens.Add(Screen.Log,new( "Log",Elements.DoorVertical,  new(screenDivaider, 0), new(screenDivaider, Location.Ymax)));
+            _screens.Add(Screen.Log,
+                new( 
+                    "Log",
+                    Elements.VisibleArea,
+                    new(_screens[Screen.Window].LocationTopLeft.X ,_screens[Screen.Window].LocationTopLeft.Y),
+                    new(screenDivaider, Location.Ymax)
+                ));
             EnvaironmentQueue(_screens[Screen.Log], Screen.Window);
 
-            _menuScreens = new Location(screenDivaider * 4 + 1, 0);
-            _screens.Add(Screen.Menu, new("Menu", Elements.DoorVertical, new(screenDivaider * 4, 0), new(screenDivaider*4, Location.Ymax)));
-            EnvaironmentQueue(_screens[Screen.Menu], Screen.Window);
-
-            _mapScreens = new Location(Location.Xmax/2, Location.Ymax/2);
-            _screens.Add(Screen.Map, new("Map", Elements.Empty, new(_screens[Screen.Log].LocationBottomRight.X, 0), new(_screens[Screen.Menu].LocationTopLeft.X, Location.Ymax)));
+            _screens.Add(Screen.Map,
+                new("Map",
+                    Elements.VisibleArea, 
+                    new(_screens[Screen.Log].LocationBottomRight.X, _screens[Screen.Log].LocationTopLeft.Y),
+                    new(_screens[Screen.Log].LocationBottomRight.X + screenDivaider * 3, Location.Ymax)
+                    ));
             EnvaironmentQueue(_screens[Screen.Map], Screen.Window);
+
+            _screens.Add(Screen.Menu,
+                new(
+                    "Menu",
+                    Elements.VisibleArea,
+                    new(_screens[Screen.Map].LocationBottomRight.X, _screens[Screen.Map].LocationTopLeft.Y),
+                    new(_screens[Screen.Map].LocationBottomRight.X + screenDivaider, Location.Ymax)
+                    ));
+            EnvaironmentQueue(_screens[Screen.Menu], Screen.Window);
         }
 
 
@@ -125,12 +138,12 @@ namespace Console_Dungeon
         {
             for (int i = envaironment.LocationTopLeft.Y; i <= envaironment.LocationBottomRight.Y; i++)
             {
-                Erasure(new Location(envaironment.LocationTopLeft.X,i));
+                Erasure(new Location(envaironment.LocationTopLeft.X, i));
                 Erasure(new Location(envaironment.LocationBottomRight.X, i));
             }
             for (int i = envaironment.LocationTopLeft.X; i <= envaironment.LocationBottomRight.X; i++)
             {
-                Erasure (new Location( i, envaironment.LocationTopLeft.Y));
+                Erasure (new Location(i, envaironment.LocationTopLeft.Y));
                 Erasure(new Location(i, envaironment.LocationBottomRight.Y));
             }
 

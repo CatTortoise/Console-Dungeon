@@ -11,6 +11,7 @@ namespace Console_Dungeon
     {
         private Location _mapSize = new Location(20,10);
         private ElementsTayp[,] _mapCollisions;
+        private Envaironment _mapBorder;
         private Envaironment[] _mapEnvironments;
         private Entity[] _mapEntities;
         private Interruptible[] _mapInterruptibles;
@@ -20,9 +21,8 @@ namespace Console_Dungeon
 
         public Map()
         {
-            GenerateMap();
+            GenerateMap(30,60);
             PopulateMap(10);
-            GenerateCollisionsMap();
             LoadeAllMapElements();
         }
 
@@ -30,6 +30,7 @@ namespace Console_Dungeon
         public Location MapSize { get => _mapSize; private set => _mapSize = value; }
         internal ElementsTayp[,] MapCollisions { get => _mapCollisions; private set => _mapCollisions = value; }
         internal Envaironment[] MapEnvironments { get => _mapEnvironments; private set => _mapEnvironments = value; }
+        internal Envaironment MapBorder { get => _mapBorder; private set => _mapBorder = value; }
 
         private void PopulateMap(int number)
         {
@@ -37,12 +38,12 @@ namespace Console_Dungeon
             for (int i = 0; i < 2; i++)
             {
                 _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Player, this));
-                MapCollisions[_mapEntities[i].Location.X, _mapEntities[i].Location.Y] = ElementsTayp.Entities;
+                GenerateCollisionsEntityMap();
             }
             for (int i = 2; i < number; i++)
             {
                 _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Goblin, this));
-                MapCollisions[_mapEntities[i].Location.X, _mapEntities[i].Location.Y] = ElementsTayp.Entities;
+                GenerateCollisionsEntityMap();
             }
             
         }
@@ -55,29 +56,33 @@ namespace Console_Dungeon
                 MapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Empty;
                 entity.MoveTo(location);
                 Renderer.EntitiesQueue(entity, Renderer.Screen.Map);
-                GenerateCollisionsMap();
+                GenerateCollisionsEnvaironmentMap();
             }
         }
 
      
 
-        private void GenerateMap()
+        private void GenerateMap(int minMapSize,int maxMapSize)
         {
-            MapSize = new(20, 50);
-            MapEnvironments = new Envaironment[4];
-            MapEnvironments[0] = new Envaironment(Generator.GeneratEnvaironment(Elements.Wall, new(MapSize.X, MapSize.X), new(MapSize.Y, MapSize.Y), this));
-            MapSize= new(MapEnvironments[0].LocationBottomRight);
+            int numberOfEnvaironments;
+            MapSize = new(maxMapSize, maxMapSize);
+            MapBorder = new Envaironment(Generator.GeneratEnvaironment(Elements.Wall, minMapSize, maxMapSize, this));
+            numberOfEnvaironments = (int)Math.Ceiling(MapBorder.LocationBottomRight.X / 6f);
+            MapEnvironments = new Envaironment[numberOfEnvaironments];
+            MapSize = new(MapBorder.LocationBottomRight);
             MapCollisions = new ElementsTayp[MapSize.X+1, MapSize.Y+1] ;
-            // MapEnvironments[0] = new("Border", Elements.Wall, new Location(0, 0), MapSize);
-            for (int i = 1; i < 4; i++)
+            GenerateCollisionsEnvaironmentMap();
+            for (int i = 0; i < numberOfEnvaironments; i++)
             {
-                MapEnvironments[i] = Generator.GeneratEnvaironment(Elements.Wall, new(5,5), new(3,3),this);
+                MapEnvironments[i] = Generator.GeneratEnvaironment(Elements.Wall, 3, 6,this);
+                GenerateCollisionsEnvaironmentMap();
             }
         }
 
         private void LoadeAllMapElements()
         {
-            foreach(Envaironment envaironment in MapEnvironments)
+            Renderer.EnvaironmentQueue(MapBorder, Renderer.Screen.Map);
+            foreach (Envaironment envaironment in MapEnvironments)
             {
                 Renderer.EnvaironmentQueue(envaironment, Renderer.Screen.Map);
             }
@@ -90,7 +95,7 @@ namespace Console_Dungeon
             }
         }
 
-        private void GenerateCollisionsMap() 
+        private void GenerateCollisionsEnvaironmentMap() 
         {
             foreach (Envaironment envaironment in MapEnvironments)
             {if (envaironment != null)
@@ -107,14 +112,17 @@ namespace Console_Dungeon
                     }
                 }
             }
+
+        }
+        private void GenerateCollisionsEntityMap()
+        {
             foreach (Entity entity in mapEntities)
             {
-                if (entity.IsAlive)
+                if (entity != null && entity.IsAlive)
                 {
                     MapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Entities;
                 }
             }
-
         }
 
 
@@ -136,7 +144,7 @@ namespace Console_Dungeon
                         if (entity.CollidedWithHostile(other.ElementCode)) 
                         {
                             ToTheDeath.Fight(EntitiesCollisions(location));
-                            GenerateCollisionsMap();
+                            GenerateCollisionsEntityMap();
                             LoadeAllMapElements();
                         }
                     }
