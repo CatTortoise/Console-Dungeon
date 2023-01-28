@@ -96,6 +96,9 @@ namespace Console_Dungeon
             this.Y = 0;
         }
 
+        /// <summary>
+        /// Returns true if both locations are the same 
+        /// </summary>
         public bool CompareLocations(Location compareToLocation) 
         { 
             return this.X == compareToLocation.X && this.Y == compareToLocation.Y;

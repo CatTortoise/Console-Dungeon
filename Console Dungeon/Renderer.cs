@@ -207,6 +207,7 @@ namespace Console_Dungeon
                 RenderEntity(entity);
             }
             _entitiesMapQueue.Clear();
+    
         }
 
     }

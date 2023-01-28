@@ -14,6 +14,8 @@ namespace Console_Dungeon
         private Envaironment[] _mapEnvironments;
         private Entity[] _mapEntities;
         private Interruptible[] _mapInterruptibles;
+        Dictionary<Location, bool> _entityLocationsForFight;
+        Stack<Location> _ScanLocationsForFight;
         private bool _isCleared;
 
         public Map()
@@ -117,18 +119,15 @@ namespace Console_Dungeon
                     collisions = true;
                     break;
                 case ElementsTayp.Entities:
-                    
                     foreach (Entity other in _mapEntities.Where<Entity>(checkEntity => checkEntity.Location.CompareLocations(location)))
                     {
-                        if (other.CollidedWithHostile(entity.ElementCode))
+                        collisions = true;
+                        if (entity.CollidedWithHostile(other.ElementCode)) 
                         {
-                            collisions = true;
+                            ToTheDeath.Fight(EntitiesCollisions(location));
+                            GenerateCollisionsMap();
+                            LoadeAllMapElements();
                         }
-                    }
-                    if (collisions)
-                    {
-                        ToTheDeath.Fight(EntitiesCollisions(location));
-                        LoadeAllMapElements();
                     }
                     break;
                 case ElementsTayp.Interruptibles:
@@ -137,10 +136,77 @@ namespace Console_Dungeon
             return collisions;
         }
 
-        private Entity[] EntitiesCollisions(Location location)
+        private Entity[] EntitiesCollisions(Location StartingLocation)
         {
-            return _mapEntities.Where<Entity>(entiy => entiy.Location.CompareLocations(location)).ToArray();
+            _entityLocationsForFight = new Dictionary<Location, bool>();
+            _ScanLocationsForFight = new Stack<Location>();
+            List<Entity> entitys = new List<Entity>();
+            GetEntitysLocationsForFight(StartingLocation);
+            foreach(Entity entity in _mapEntities)
+            {
+                if (_entityLocationsForFight.ContainsKey(entity.Location))
+                {
+                    entitys.Add(entity);
+                }
+            }
+            return entitys.ToArray();
         }
+
+        /// <summary>
+        /// Checks the tiles around a given location to see if it contains any entities. 
+        /// The location that was used for Centre point get it's value set to true.
+        /// locations That were not used for center point yet are set to false.
+        /// </summary>
+        /// <param name="location"></param>
+        private void GetEntitysLocationsForFight(Location centerPoint )
+        {
+            Location scanLocation = new();
+            for (int x = -1; x < 2; x++)
+            {
+                for (int y = -1; y < 2; y++)
+                {
+                    scanLocation.X = centerPoint.X + x;
+                    scanLocation.Y = centerPoint.Y + y;
+                    if (!_entityLocationsForFight.ContainsKey(scanLocation))
+                    {
+                        if (_mapCollisions[scanLocation.X, scanLocation.Y] == ElementsTayp.Entities)
+                        {
+                            _entityLocationsForFight.Add(new(scanLocation), false);
+                            _ScanLocationsForFight.Push(scanLocation);
+                        } 
+                    }
+                }
+            }
+            if (_entityLocationsForFight.ContainsKey(centerPoint))
+            {
+                _entityLocationsForFight[centerPoint] = true;
+            }
+            CheckedIfAllLocationsWereScanned();
+        }
+
+        /// <summary>
+        /// Checks if There are any unscanned locations 
+        /// If there are any unscanned locations 
+        /// They are send to be scanned 
+        /// </summary>
+        private void CheckedIfAllLocationsWereScanned()
+        {
+            Location location = new();
+            if (_entityLocationsForFight.ContainsValue(false))
+            {
+                foreach (Location entityLocations in _entityLocationsForFight.Keys)
+                {
+                    if (!_entityLocationsForFight[entityLocations])
+                    {
+                        location = entityLocations;
+                        break;
+                    }
+                }
+                GetEntitysLocationsForFight(location);
+            }
+            
+        }
+
     }
 }
 

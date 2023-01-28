@@ -11,7 +11,23 @@ namespace Console_Dungeon
     {
         public static void Fight(Entity[] entities)
         {
-            FightGameLoop(entities.Where<Entity>(entiy => entiy != null && entiy.IsPlayer).ToArray(), entities.Where<Entity>(entiy => entiy != null && !entiy.IsPlayer).ToArray());
+            List<Entity> player = new List<Entity>();
+            List<Entity> npc = new List<Entity>();
+            foreach (Entity entity in entities)
+            {
+                if (entity != null)
+                {
+                    if (entity.IsPlayer)
+                    {
+                        player.Add(entity);
+                    }
+                    else
+                    {
+                        npc.Add(entity);
+                    }
+                }
+            }
+            FightGameLoop(player.ToArray(), npc.ToArray());
         }
 
         private static void FightGameLoop(Entity[] player, Entity[] npc)
@@ -46,7 +62,7 @@ namespace Console_Dungeon
                     foreach (Entity Entity in player)
                     {
                         fightOver = true;
-                        if (Entity.EntityAction != Action.Actions.Dead)
+                        if (Entity.IsAlive)
                         {
                             fightOver = false;
                             break;
@@ -54,9 +70,10 @@ namespace Console_Dungeon
                     }
                     if (!fightOver)
                     {
-                        foreach (Entity Entity in npc)
+                    fightOver = true;
+                    foreach (Entity Entity in npc)
                         {
-                            if (Entity.EntityAction != Action.Actions.Dead)
+                            if (Entity.IsAlive)
                             {
                                 fightOver = false;
                                 break;

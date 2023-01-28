@@ -27,20 +27,23 @@ namespace Console_Dungeon
         }
         public static void RendererEntitys(Entity[] Entitys)
         {
-            string _renderString = "";
-            ConsoleColor color = Entitys[0].EntityColor;
-            _renderString += $"Team: {Entitys[0].EntityColor}\n";
-            int index = 0;
-            foreach (Entity Entity in Entitys)
+            if (Entitys != null)
             {
-                if (Entity != null)
+                string _renderString = "";
+                ConsoleColor color = Entitys[0].EntityColor;
+                _renderString += $"Team: {Entitys[0].EntityColor}\n";
+                int index = 0;
+                foreach (Entity Entity in Entitys)
                 {
-                    _renderString += "  ";
-                    _renderString += Entity.GetEntityStats() + " (Action: " + Entity.EntityAction + ")\n";
-                    index++;
+                    if (Entity != null)
+                    {
+                        _renderString += "  ";
+                        _renderString += Entity.GetEntityStats() + " (Action: " + Entity.EntityAction + ")\n";
+                        index++;
+                    }
                 }
+                PrintColoredMessage(_renderString, color);
             }
-            PrintColoredMessage(_renderString, color);
         }
 
         public static Action.Actions[] FightMenu(Entity[] Entitys)

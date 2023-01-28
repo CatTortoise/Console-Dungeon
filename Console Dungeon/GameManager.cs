@@ -13,6 +13,7 @@ namespace Console_Dungeon
 
         public static void StartConsoleDungeon()
         {
+           
             Console.CursorVisible = false;
             Renderer.SetScreens();
             Menu.SetMenu(Menu.MenuType.ArrayDataStructures);
@@ -20,10 +21,12 @@ namespace Console_Dungeon
             _maps[0] = new Map();
             Renderer.Render();
             GameLoop();
+
         }
 
         private static void GameLoop()
         {
+             
             do
             {
                 foreach(Entity entity in _maps[0].mapEntities)
@@ -36,9 +39,11 @@ namespace Console_Dungeon
                     {
                         Menu.MoveIndicator();
                     }
+                    Renderer.Render();
                 }
-                Renderer.Render();
-            } while(true);
+               
+            } while(true); 
+            
         }
     }
 }
