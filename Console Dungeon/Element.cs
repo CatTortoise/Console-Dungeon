@@ -13,8 +13,6 @@ namespace Console_Dungeon
             # region Environment
             NonVisibleArea,
             Wall,
-            DoorVertical,
-            DoorHorizontal,
             VisibleArea,
             #endregion
             # region Entities 
@@ -25,6 +23,8 @@ namespace Console_Dungeon
             Mimic,
             #endregion
             #region Interruptibles
+            DoorVertical,
+            DoorHorizontal,
             TrapArmed,
             TrapDisarmed,
             TreasureChest,
@@ -59,14 +59,14 @@ namespace Console_Dungeon
             {
                 { Elements.NonVisibleArea,(char)32 },
                 { Elements.Wall, (char)35 },
-                { Elements.DoorVertical, (char)124 },
-                { Elements.DoorHorizontal, (char)95 },
                 { Elements.VisibleArea, (char)183 },
                 { Elements.Player, (char)2 },
                 { Elements.Goblin, (char)103 },
                 { Elements.Hob_Goblin, (char)71 },
                 { Elements.Minatore, (char)77 },
                 { Elements.Mimic, (char)63 },
+                { Elements.DoorVertical, (char)124 },
+                { Elements.DoorHorizontal, (char)95 },
                 { Elements.TrapArmed, (char)15 },
                 { Elements.TrapDisarmed, (char)42 },
                 { Elements.TreasureChest, (char)63 },
@@ -93,14 +93,6 @@ namespace Console_Dungeon
                 { Elements.Empty,ConsoleColor.White },
                 { Elements.MenuIndicator, ConsoleColor.White }
             };
-
-
-    //,
-    //            { Elements.Goblin,  },
-    //            { Elements.Hob_Goblin, },
-    //            { Elements.Minatore,  },
-    //            { Elements.Mimic,  }
-    //        };
 
 
         public static Dictionary<Elements, char> ElementDictionary { get => _elementDictionary; private set => _elementDictionary = value; }

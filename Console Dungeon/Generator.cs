@@ -14,7 +14,7 @@ namespace Console_Dungeon
         {
             Entity entities = new
                 (
-                $"{element}",
+                $"{element} {id}",
                 element == Element.Elements.Player,
                 GeneratHP(element),
                 GeneratStrength(element),
@@ -22,7 +22,7 @@ namespace Console_Dungeon
                 GeneratReactionSpeed(element),
                 GeneratSenses(element),
                 GeneratToughness(element),
-                GeneratLocation(element,map),
+                GeneratEntityLocation(element,map),
                 element,
                 Element.ElementForegroundColorDictionary[element] ,
                 GeneratId(element)
@@ -30,9 +30,17 @@ namespace Console_Dungeon
             return entities;
         }
 
-        private static Location GeneratLocation(Element.Elements element , Map map)
+        private static Location GeneratEntityLocation(Element.Elements element , Map map)
         {
-            Location location = new(Random.Shared.Next(1, map.MapSize.X), Random.Shared.Next(1, map.MapSize.Y));
+
+            Location location = new
+                (
+                Random.Shared.Next(
+                    map.MapEnvironments[0].LocationTopLeft.X+1, map.MapEnvironments[0].LocationBottomRight.X), 
+                Random.Shared.Next(
+                    map.MapEnvironments[0].LocationTopLeft.Y + 1, map.MapEnvironments[0].LocationBottomRight.Y)
+                );
+            //Location location = new(Random.Shared.Next(1, map.MapSize.X), Random.Shared.Next(1, map.MapSize.Y));
 
             switch (element)
             {
@@ -282,11 +290,62 @@ namespace Console_Dungeon
         }
         #endregion
 
-        public static void GeneratEnvaironment(Element.Elements element, Map map)
+        public static Envaironment GeneratEnvaironment(Element.Elements element, Location maxEnvaironmentSize, Location minEnvaironmentSize, Map map)
         {
-
+            Location[] locations = GeneratEnvaironmentLocation(element, maxEnvaironmentSize, minEnvaironmentSize, map);
+            Envaironment envaironment = new
+                (
+                $"{element} {id}",
+                element,
+                locations[0],
+                locations[1]
+                );
+            return envaironment;
         }
 
+
+        /// <summary>
+        /// The function returns a two parameter Location array where the first "0" value is there top left location
+        /// and there second value "1" is the bottom right location 
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="maxEnvaironmentSize"></param>
+        /// <param name="minEnvaironmentSize"></param>
+        /// <param name="map"></param>
+        /// <returns></returns>
+        private static Location[] GeneratEnvaironmentLocation(Element.Elements element, Location minEnvaironmentSize, Location maxEnvaironmentSize,  Map map)
+        {
+            Location topLeftLocation = new();
+            Location bottomRightLocation = new();
+            switch (element)
+            {
+                case Element.Elements.Wall:
+                    do
+                    {
+                        if (map.MapEnvironments[0] == null)
+                        {
+                            topLeftLocation = new(Random.Shared.Next(0, map.MapSize.X - minEnvaironmentSize.X), Random.Shared.Next(0, map.MapSize.Y - minEnvaironmentSize.Y));
+                            bottomRightLocation = new(Random.Shared.Next(topLeftLocation.X, topLeftLocation.X + maxEnvaironmentSize.X), Random.Shared.Next(topLeftLocation.Y, topLeftLocation.Y + maxEnvaironmentSize.Y));
+                        }
+                        else
+                        {
+                            topLeftLocation = new(
+                                                Random.Shared.Next(
+                                                    map.MapEnvironments[0].LocationTopLeft.X, map.MapEnvironments[0].LocationBottomRight.X - minEnvaironmentSize.X),
+                                                Random.Shared.Next(
+                                                    map.MapEnvironments[0].LocationTopLeft.Y + 1, map.MapEnvironments[0].LocationBottomRight.Y - minEnvaironmentSize.Y)
+                                                );
+                            bottomRightLocation = new(
+                                                Random.Shared.Next(topLeftLocation.X, topLeftLocation.X + maxEnvaironmentSize.X), 
+                                                Random.Shared.Next(topLeftLocation.Y, topLeftLocation.Y + maxEnvaironmentSize.Y));
+                        }
+                    } while (!(bottomRightLocation.X <= map.MapSize.X && bottomRightLocation.Y <= map.MapSize.Y));
+                    break;
+            }
+
+
+            return new Location[] { topLeftLocation , bottomRightLocation };
+        }
         private static bool ChecksIfLocationIsAvailable(Location location , Map map)
         {
             return map.MapCollisions[location.X,location.Y] == Element.ElementsTayp.Empty;

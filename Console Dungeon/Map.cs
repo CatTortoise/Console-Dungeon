@@ -29,6 +29,7 @@ namespace Console_Dungeon
         public Entity[] mapEntities { get => _mapEntities; private set => _mapEntities = value; }
         public Location MapSize { get => _mapSize; private set => _mapSize = value; }
         internal ElementsTayp[,] MapCollisions { get => _mapCollisions; private set => _mapCollisions = value; }
+        internal Envaironment[] MapEnvironments { get => _mapEnvironments; private set => _mapEnvironments = value; }
 
         private void PopulateMap(int number)
         {
@@ -62,14 +63,21 @@ namespace Console_Dungeon
 
         private void GenerateMap()
         {
+            MapSize = new(20, 50);
+            MapEnvironments = new Envaironment[4];
+            MapEnvironments[0] = new Envaironment(Generator.GeneratEnvaironment(Elements.Wall, new(MapSize.X, MapSize.X), new(MapSize.Y, MapSize.Y), this));
+            MapSize= new(MapEnvironments[0].LocationBottomRight);
             MapCollisions = new ElementsTayp[MapSize.X+1, MapSize.Y+1] ;
-            _mapEnvironments = new Envaironment[4];
-            _mapEnvironments[0] = new("Border", Elements.Wall, new Location(0, 0), MapSize);
+            // MapEnvironments[0] = new("Border", Elements.Wall, new Location(0, 0), MapSize);
+            for (int i = 1; i < 4; i++)
+            {
+                MapEnvironments[i] = Generator.GeneratEnvaironment(Elements.Wall, new(5,5), new(3,3),this);
+            }
         }
 
         private void LoadeAllMapElements()
         {
-            foreach(Envaironment envaironment in _mapEnvironments)
+            foreach(Envaironment envaironment in MapEnvironments)
             {
                 Renderer.EnvaironmentQueue(envaironment, Renderer.Screen.Map);
             }
@@ -84,7 +92,7 @@ namespace Console_Dungeon
 
         private void GenerateCollisionsMap() 
         {
-            foreach (Envaironment envaironment in _mapEnvironments)
+            foreach (Envaironment envaironment in MapEnvironments)
             {if (envaironment != null)
                 {
                     for (int i = envaironment.LocationTopLeft.X; i < envaironment.LocationBottomRight.X; i++)
