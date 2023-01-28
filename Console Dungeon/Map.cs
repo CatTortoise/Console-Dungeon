@@ -28,6 +28,7 @@ namespace Console_Dungeon
 
         public Entity[] mapEntities { get => _mapEntities; private set => _mapEntities = value; }
         public Location MapSize { get => _mapSize; private set => _mapSize = value; }
+        internal ElementsTayp[,] MapCollisions { get => _mapCollisions; private set => _mapCollisions = value; }
 
         private void PopulateMap(int number)
         {
@@ -35,10 +36,12 @@ namespace Console_Dungeon
             for (int i = 0; i < 2; i++)
             {
                 _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Player, this));
+                MapCollisions[_mapEntities[i].Location.X, _mapEntities[i].Location.Y] = ElementsTayp.Entities;
             }
             for (int i = 2; i < number; i++)
             {
                 _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Goblin, this));
+                MapCollisions[_mapEntities[i].Location.X, _mapEntities[i].Location.Y] = ElementsTayp.Entities;
             }
             
         }
@@ -48,7 +51,7 @@ namespace Console_Dungeon
             //Checks if love is possible
             if (!entity.Location.CompareLocations(location) && !CheckCollision(location, entity))
             {
-                _mapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Empty;
+                MapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Empty;
                 entity.MoveTo(location);
                 Renderer.EntitiesQueue(entity, Renderer.Screen.Map);
                 GenerateCollisionsMap();
@@ -59,7 +62,7 @@ namespace Console_Dungeon
 
         private void GenerateMap()
         {
-            _mapCollisions = new ElementsTayp[MapSize.X+1, MapSize.Y+1] ;
+            MapCollisions = new ElementsTayp[MapSize.X+1, MapSize.Y+1] ;
             _mapEnvironments = new Envaironment[4];
             _mapEnvironments[0] = new("Border", Elements.Wall, new Location(0, 0), MapSize);
         }
@@ -86,13 +89,13 @@ namespace Console_Dungeon
                 {
                     for (int i = envaironment.LocationTopLeft.X; i < envaironment.LocationBottomRight.X; i++)
                     {
-                        _mapCollisions[i, envaironment.LocationTopLeft.Y] = ElementsTayp.Environment;
-                        _mapCollisions[i, envaironment.LocationBottomRight.Y] = ElementsTayp.Environment;
+                        MapCollisions[i, envaironment.LocationTopLeft.Y] = ElementsTayp.Environment;
+                        MapCollisions[i, envaironment.LocationBottomRight.Y] = ElementsTayp.Environment;
                     }
                     for (int i = envaironment.LocationTopLeft.Y; i < envaironment.LocationBottomRight.Y; i++)
                     {
-                        _mapCollisions[envaironment.LocationTopLeft.X, i] = ElementsTayp.Environment;
-                        _mapCollisions[envaironment.LocationBottomRight.X, i] = ElementsTayp.Environment;
+                        MapCollisions[envaironment.LocationTopLeft.X, i] = ElementsTayp.Environment;
+                        MapCollisions[envaironment.LocationBottomRight.X, i] = ElementsTayp.Environment;
                     }
                 }
             }
@@ -100,7 +103,7 @@ namespace Console_Dungeon
             {
                 if (entity.IsAlive)
                 {
-                    _mapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Entities;
+                    MapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Entities;
                 }
             }
 
@@ -111,7 +114,7 @@ namespace Console_Dungeon
         {
 
             bool collisions = false;
-            switch (_mapCollisions[location.X, location.Y])
+            switch (MapCollisions[location.X, location.Y])
             {
                 case ElementsTayp.Empty:
                     break;
@@ -169,7 +172,7 @@ namespace Console_Dungeon
                     scanLocation.Y = centerPoint.Y + y;
                     if (!_entityLocationsForFight.ContainsKey(scanLocation))
                     {
-                        if (_mapCollisions[scanLocation.X, scanLocation.Y] == ElementsTayp.Entities)
+                        if (MapCollisions[scanLocation.X, scanLocation.Y] == ElementsTayp.Entities)
                         {
                             _entityLocationsForFight.Add(new(scanLocation), false);
                             _ScanLocationsForFight.Push(scanLocation);

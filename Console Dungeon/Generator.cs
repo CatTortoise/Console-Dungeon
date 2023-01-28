@@ -8,6 +8,7 @@ namespace Console_Dungeon
 {
     static class Generator
     {
+        #region Entity Generator
         static Stack<int> id = new Stack<int>( new int[] { 1 }) ;
         static public Entity GeneratEntity(Element.Elements element,Map map )
         {
@@ -31,12 +32,12 @@ namespace Console_Dungeon
 
         private static Location GeneratLocation(Element.Elements element , Map map)
         {
-            Location location = new(Random.Shared.Next(1,map.MapSize.X), Random.Shared.Next(1,map.MapSize.Y));
+            Location location = new(Random.Shared.Next(1, map.MapSize.X), Random.Shared.Next(1, map.MapSize.Y));
 
             switch (element)
             {
                 case Element.Elements.Player:
-                    location = new(1,1);
+                    location = new(1, 1);
                     break;
                 case Element.Elements.Goblin:
                     break;
@@ -48,6 +49,36 @@ namespace Console_Dungeon
                     break;
                 default:
                     break;
+            }
+            bool FoundAvailableLocation = ChecksIfLocationIsAvailable(location, map);
+            while (!FoundAvailableLocation)
+            {
+                for (int y = 0; y < map.MapSize.Y; y++)
+                {
+                    for (int x = 0; x < map.MapSize.X; x++)
+                    {
+                        FoundAvailableLocation = ChecksIfLocationIsAvailable(new(location.X + x, location.Y + y), map);
+                        if (FoundAvailableLocation)
+                        {
+                            location.X += x;
+                            location.Y += y;
+                            return location;
+                        }
+                    }
+                }
+                for (int y = 0; map.MapSize.Y-y > 0; y--)
+                {
+                    for (int x = 0; map.MapSize.X-x > 0; x--)
+                    {
+                        FoundAvailableLocation = ChecksIfLocationIsAvailable(new(location.X + x, location.Y + y), map);
+                        if (FoundAvailableLocation)
+                        {
+                            location.X += x;
+                            location.Y += y;
+                            return location;
+                        }
+                    }
+                }
             }
             return location;
         }
@@ -248,6 +279,17 @@ namespace Console_Dungeon
                     break;
             }
             return Random.Shared.Next(min, max);
+        }
+        #endregion
+
+        public static void GeneratEnvaironment(Element.Elements element, Map map)
+        {
+
+        }
+
+        private static bool ChecksIfLocationIsAvailable(Location location , Map map)
+        {
+            return map.MapCollisions[location.X,location.Y] == Element.ElementsTayp.Empty;
         }
     }
 }
