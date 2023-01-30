@@ -9,12 +9,12 @@ namespace Console_Dungeon
     static class Generator
     {
         #region Entity Generator
-        static Stack<int> id = new Stack<int>( new int[] { 1 }) ;
+        static int id = 0;
         static public Entity GeneratEntity(Element.Elements element,Map map )
         {
             Entity entities = new
                 (
-                $"{element} {id}",
+                $"{element}",
                 element == Element.Elements.Player,
                 GeneratHP(element),
                 GeneratStrength(element),
@@ -89,12 +89,6 @@ namespace Console_Dungeon
                 }
             }
             return location;
-        }
-
-        private static int GeneratId(Element.Elements element)
-        {
-            id.Push(id.Peek()+1);
-            return id.Peek();
         }
 
         private static int GeneratSenses(Element.Elements element)
@@ -290,12 +284,13 @@ namespace Console_Dungeon
         }
         #endregion
 
+        #region Envaironment Generat 
         public static Envaironment GeneratEnvaironment(Element.Elements element, int minEnvaironmentSize, int maxEnvaironmentSize, Map map)
         {
             Location[] locations = GeneratEnvaironmentLocation(element, minEnvaironmentSize, maxEnvaironmentSize, map);
             Envaironment envaironment = new
                 (
-                $"{element} {id}",
+                $"{element} {GeneratId(element)}",
                 element,
                 locations[0],
                 locations[1]
@@ -375,5 +370,49 @@ namespace Console_Dungeon
             }
             return IsAvailable;
         }
+        #endregion
+
+        #region
+        static public Weapon GeneratWeapon(Element.Elements WhatGenerates)
+        {
+            int min = 0;
+            int max = 1;
+            switch (WhatGenerates)
+            {
+                case Element.Elements.Player:
+                    min = 10;
+                    max = 50;
+                    break;
+                case Element.Elements.Goblin:
+                    min = 5;
+                    max = 20;
+                    break;
+                case Element.Elements.Hob_Goblin:
+                    min = 60;
+                    max = 70;
+                    break;
+                case Element.Elements.Minatore:
+                    min = 50;
+                    max = 80;
+                    break;
+                case Element.Elements.Mimic:
+                    min = 60;
+                    max = 100;
+                    break;
+                default:
+                    break;   
+            }
+
+            return new Weapon(min, max);
+        }
+        #endregion
+
+        private static int GeneratId(Element.Elements element)
+        { 
+            return id++;
+        }
+        
+
+
     }
 }

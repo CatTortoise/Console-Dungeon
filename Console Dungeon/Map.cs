@@ -26,7 +26,7 @@ namespace Console_Dungeon
             LoadeAllMapElements();
         }
 
-        public Entity[] mapEntities { get => _mapEntities; private set => _mapEntities = value; }
+        public Entity[] MapEntities { get => _mapEntities; private set => _mapEntities = value; }
         public Location MapSize { get => _mapSize; private set => _mapSize = value; }
         internal ElementsTayp[,] MapCollisions { get => _mapCollisions; private set => _mapCollisions = value; }
         internal Envaironment[] MapEnvironments { get => _mapEnvironments; private set => _mapEnvironments = value; }
@@ -56,7 +56,7 @@ namespace Console_Dungeon
                 MapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Empty;
                 entity.MoveTo(location);
                 Renderer.EntitiesQueue(entity, Renderer.Screen.Map);
-                GenerateCollisionsEnvaironmentMap();
+                GenerateCollisionsEntityMap();
             }
         }
 
@@ -69,10 +69,11 @@ namespace Console_Dungeon
             MapBorder = new Envaironment(Generator.GeneratEnvaironment(Elements.Wall, minMapSize, maxMapSize, this));
             numberOfEnvaironments = (int)Math.Ceiling(MapBorder.LocationBottomRight.X / 6f);
             MapEnvironments = new Envaironment[numberOfEnvaironments];
+            MapEnvironments[0] = MapBorder;
             MapSize = new(MapBorder.LocationBottomRight);
             MapCollisions = new ElementsTayp[MapSize.X+1, MapSize.Y+1] ;
             GenerateCollisionsEnvaironmentMap();
-            for (int i = 0; i < numberOfEnvaironments; i++)
+            for (int i = 1; i < numberOfEnvaironments; i++)
             {
                 MapEnvironments[i] = Generator.GeneratEnvaironment(Elements.Wall, 3, 6,this);
                 GenerateCollisionsEnvaironmentMap();
@@ -86,7 +87,7 @@ namespace Console_Dungeon
             {
                 Renderer.EnvaironmentQueue(envaironment, Renderer.Screen.Map);
             }
-            foreach (Entity entities in mapEntities)
+            foreach (Entity entities in MapEntities)
             {
                 if (entities.IsAlive)
                 {
@@ -100,12 +101,12 @@ namespace Console_Dungeon
             foreach (Envaironment envaironment in MapEnvironments)
             {if (envaironment != null)
                 {
-                    for (int i = envaironment.LocationTopLeft.X; i < envaironment.LocationBottomRight.X; i++)
+                    for (int i = envaironment.LocationTopLeft.X; i <= envaironment.LocationBottomRight.X; i++)
                     {
                         MapCollisions[i, envaironment.LocationTopLeft.Y] = ElementsTayp.Environment;
                         MapCollisions[i, envaironment.LocationBottomRight.Y] = ElementsTayp.Environment;
                     }
-                    for (int i = envaironment.LocationTopLeft.Y; i < envaironment.LocationBottomRight.Y; i++)
+                    for (int i = envaironment.LocationTopLeft.Y; i <= envaironment.LocationBottomRight.Y; i++)
                     {
                         MapCollisions[envaironment.LocationTopLeft.X, i] = ElementsTayp.Environment;
                         MapCollisions[envaironment.LocationBottomRight.X, i] = ElementsTayp.Environment;
@@ -115,12 +116,19 @@ namespace Console_Dungeon
 
         }
         private void GenerateCollisionsEntityMap()
-        {
-            foreach (Entity entity in mapEntities)
+        { 
+            foreach (Entity entity in MapEntities)
             {
-                if (entity != null && entity.IsAlive)
+                if (entity != null)
                 {
-                    MapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Entities;
+                    if (entity.IsAlive == true)
+                    {
+                        MapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Entities;
+                    }
+                    else
+                    {
+                        MapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Empty;
+                    }
                 }
             }
         }
@@ -143,9 +151,11 @@ namespace Console_Dungeon
                         collisions = true;
                         if (entity.CollidedWithHostile(other.ElementCode)) 
                         {
-                            ToTheDeath.Fight(EntitiesCollisions(location));
+                            Entity[] entitysFortoTheDeath = EntitiesCollisions(location);
+                            ToTheDeath.Fight(entitysFortoTheDeath);
                             GenerateCollisionsEntityMap();
                             LoadeAllMapElements();
+                            break;
                         }
                     }
                     break;

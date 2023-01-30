@@ -6,8 +6,7 @@ namespace Console_Dungeon
 {
     class Weapon
     {
-        readonly int min = 1;
-        readonly int max = 10;
+        
         private int _damage = 0;
         public int Damage { get => _damage; private set => _damage = value; }
 
@@ -17,7 +16,7 @@ namespace Console_Dungeon
         /// <summary>
         /// Generator random weapon with values between 1 to 10 
         /// </summary>
-        public Weapon()
+        public Weapon(int min,int max)
         {
             Damage = Random.Shared.Next(min, max);
             Accuracy = Random.Shared.Next(min, max);

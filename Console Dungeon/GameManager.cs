@@ -29,7 +29,7 @@ namespace Console_Dungeon
              
             do
             {
-                foreach(Entity entity in _maps[0].mapEntities)
+                foreach(Entity entity in _maps[0].MapEntities)
                 {
                     if (InputManager.InputSystem == InputManager.inputType.Game)
                     {

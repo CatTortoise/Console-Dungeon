@@ -22,6 +22,7 @@ namespace Console_Dungeon
         private int _id;
         private bool _IsPlayer;
         private bool _isAlive = true;
+        private bool _isfighting = false;
         private Shield _shield;
         private Weapon _weapon;
 
@@ -95,7 +96,7 @@ namespace Console_Dungeon
             ElementCode = elementCode;
             Id = id;
             _entityColor = ConsoleColor.White;
-            Weapon = new();
+            Weapon = Generator.GeneratWeapon(elementCode);
             Shield = new();
         }
         //for Map
@@ -126,7 +127,7 @@ namespace Console_Dungeon
             EntityAction = Action.Actions.GoIdol;
             _isNotQueued = false;
             _entityColor = ConsoleColor.White;
-            Weapon = new();
+            Weapon = Generator.GeneratWeapon(elementCode);
             Shield = new();
 
         }
@@ -157,7 +158,7 @@ namespace Console_Dungeon
             EntityAction = Action.Actions.GoIdol;
             _isNotQueued = false;
             _entityColor = ConsoleColor.White;
-            Weapon = new();
+            Weapon = Generator.GeneratWeapon(entity.ElementCode);
             Shield = new();
 
         }
@@ -186,7 +187,7 @@ namespace Console_Dungeon
         public int Toughness { get => _toughness; private set => _toughness = value; }
         public Shield Shield { get => _shield; private set => _shield = value; }
         public Weapon Weapon { get => _weapon; private set => _weapon = value; }
-        
+        public bool Isfighting { get => _isfighting; set => _isfighting = value; }
 
         public void ActionsSelection(Action.Actions action)
         {
