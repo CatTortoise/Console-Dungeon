@@ -16,13 +16,12 @@ namespace Console_Dungeon
 
         private string _name;
         private Element.Elements _ElementCode;
-        private ConsoleColor _entityColor;
         private Location _previousLocation;
         private Location _location;
         private int _id;
         private bool _IsPlayer;
         private bool _isAlive = true;
-        private bool _isfighting = false;
+        private bool _myTurn = false;
         private Shield _shield;
         private Weapon _weapon;
 
@@ -86,7 +85,7 @@ namespace Console_Dungeon
 
 
         //for Renderer
-        public Entity(string name, bool isPlayer, Location location, Location previousLocation, Element.Elements elementCode, int id)
+        public Entity(string name, bool isPlayer, Location location, Location previousLocation, Element.Elements elementCode, int id, bool myTurn)
         {
             Name = name;
             IsPlayer = isPlayer;
@@ -95,9 +94,9 @@ namespace Console_Dungeon
             PreviousLocation = previousLocation;
             ElementCode = elementCode;
             Id = id;
-            _entityColor = ConsoleColor.White;
             Weapon = Generator.GeneratWeapon(elementCode);
             Shield = new();
+            MyTurn = myTurn;
         }
         //for Map
         public Entity(string name, bool isPlayer,int maxHP ,int strength,int energy, int reactionSpeed,int senses , int toughness,Location location, Element.Elements elementCode, ConsoleColor Color, int id)
@@ -121,12 +120,10 @@ namespace Console_Dungeon
             CurrentEnergy = MaxEnergy;
             ReactionSpeed = reactionSpeed;
             CalculateEvasion();
-            EntityColor = Color;
             _isShielding = false;
             _isBusy = false;
             EntityAction = Action.Actions.GoIdol;
             _isNotQueued = false;
-            _entityColor = ConsoleColor.White;
             Weapon = Generator.GeneratWeapon(elementCode);
             Shield = new();
 
@@ -152,12 +149,10 @@ namespace Console_Dungeon
             CurrentEnergy = MaxEnergy;
             ReactionSpeed = entity.ReactionSpeed;
             CalculateEvasion();
-            EntityColor = entity.EntityColor;
             _isShielding = false;
             _isBusy = false;
             EntityAction = Action.Actions.GoIdol;
             _isNotQueued = false;
-            _entityColor = ConsoleColor.White;
             Weapon = Generator.GeneratWeapon(entity.ElementCode);
             Shield = new();
 
@@ -178,7 +173,6 @@ namespace Console_Dungeon
         public int Id { get => _id; set => _id = value; }
         public bool IsPlayer { get => _IsPlayer; private set => _IsPlayer = value; }
         public bool IsAlive { get => _isAlive; private set => _isAlive = value; }
-        public ConsoleColor EntityColor { get => _entityColor; private set => _entityColor = value; }
         public int Strength { get => _strength; private set => _strength = value; }
         public int ReactionSpeed { get => _reactionSpeed; private set => _reactionSpeed = value; }
         public int MaxEnergy { get => _maxEnergy;private set => _maxEnergy = value; }
@@ -187,7 +181,7 @@ namespace Console_Dungeon
         public int Toughness { get => _toughness; private set => _toughness = value; }
         public Shield Shield { get => _shield; private set => _shield = value; }
         public Weapon Weapon { get => _weapon; private set => _weapon = value; }
-        public bool Isfighting { get => _isfighting; set => _isfighting = value; }
+        public bool MyTurn { get => _myTurn; private set => _myTurn = value; }
 
         public void ActionsSelection(Action.Actions action)
         {

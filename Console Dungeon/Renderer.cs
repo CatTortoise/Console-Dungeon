@@ -70,6 +70,26 @@ namespace Console_Dungeon
         {
             _printeMenu = true;
         }
+        public static bool EntitiesQueue(Entity entity, Screen screen, bool myTurn)
+        {
+            if (entity != null && entity.IsAlive)
+            {
+                Entity EntityForQueue;
+                Location res = _screens[screen].LocationTopLeft;
+                EntityForQueue = new(
+                    $"{entity.Name} for Queue",
+                    false,
+                    new(res.X + entity.Location.X, res.Y + entity.Location.Y),
+                    new(res.X + entity.PreviousLocation.X, res.Y + entity.PreviousLocation.Y),
+                    entity.ElementCode,
+                    entity.Id,
+                    myTurn
+                    );
+                _entitiesMapQueue.Enqueue(EntityForQueue);
+                return true;
+            }
+            return false;
+        }
         public static bool EntitiesQueue(Entity entity, Screen screen)
         {
             if (entity != null && entity.IsAlive)
@@ -82,8 +102,9 @@ namespace Console_Dungeon
                     new(res.X + entity.Location.X, res.Y + entity.Location.Y),
                     new(res.X + entity.PreviousLocation.X, res.Y + entity.PreviousLocation.Y),
                     entity.ElementCode,
-                    entity.Id
-                    );
+                    entity.Id,
+                    false
+                    ) ;
                 _entitiesMapQueue.Enqueue(EntityForQueue);
                 return true;
             }
@@ -112,7 +133,7 @@ namespace Console_Dungeon
 
         private static void RenderEntity(Entity entity)
         {
-            RenderElement(entity.ElementCode, new Location(entity.Location.X, entity.Location.Y));
+            RenderElement(entity.ElementCode, new Location(entity.Location.X, entity.Location.Y), entity.MyTurn,false);
         }
 
         private static void ErasureMenu()
@@ -165,9 +186,26 @@ namespace Console_Dungeon
         }
 
 
-        private static void RenderElement(Elements element, Location location,ConsoleColor color)
+        private static void RenderElement(Elements element, Location location,bool useSecondColor, bool useBackgroundColor)
         {
-            ConsoleColor tempColor = Console.ForegroundColor;
+            ConsoleColor holdForegroundColor = Console.ForegroundColor;
+            ConsoleColor holdBackgroundColor = Console.BackgroundColor;
+            if (useSecondColor)
+            {
+                Console.ForegroundColor = ElementSecondColorDictionary[element];
+            }
+            else
+            {
+                Console.ForegroundColor = ElementFirstColorDictionary[element]; 
+            }
+            if (useBackgroundColor) 
+            { 
+                Console.BackgroundColor = ElementSecondColorDictionary[element];
+            }
+            RenderElement(element, location);
+            Console.ForegroundColor = holdForegroundColor;
+            Console.BackgroundColor = holdBackgroundColor;
+
         }
         private static void RenderElement(Elements element, Location location)
         {

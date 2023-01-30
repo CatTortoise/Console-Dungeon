@@ -31,15 +31,23 @@ namespace Console_Dungeon
             {
                 foreach(Entity entity in _maps[0].MapEntities)
                 {
-                    if (InputManager.InputSystem == InputManager.inputType.Game)
+                    if (entity != null)
                     {
-                        _maps[0].MoveTo(InputManager.PlayerInput(entity), entity);
+                        if (entity.IsPlayer == true)
+                        {
+                            Renderer.EntitiesQueue(entity,Renderer.Screen.Map,true);
+                            Renderer.Render();
+                        }
+                            if (InputManager.InputSystem == InputManager.inputType.Game)
+                            {
+                                _maps[0].MoveTo(InputManager.PlayerInput(entity), entity);
+                            }
+                        while (InputManager.InputSystem == InputManager.inputType.Menu)
+                        {
+                            Menu.MoveIndicator();
+                        }
+                        Renderer.Render();
                     }
-                    while (InputManager.InputSystem == InputManager.inputType.Menu)
-                    {
-                        Menu.MoveIndicator();
-                    }
-                    Renderer.Render();
                 }
                
             } while(true); 

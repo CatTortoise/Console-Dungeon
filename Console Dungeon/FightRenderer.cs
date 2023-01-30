@@ -30,8 +30,8 @@ namespace Console_Dungeon
             if (Entitys != null)
             {
                 string _renderString = "";
-                ConsoleColor color = Entitys[0].EntityColor;
-                _renderString += $"Team: {Entitys[0].EntityColor}\n";
+                ConsoleColor color = Element.ElementFirstColorDictionary[Entitys[0].ElementCode];
+                _renderString += $"Team: {Element.ElementFirstColorDictionary[Entitys[0].ElementCode]}\n";
                 int index = 0;
                 foreach (Entity Entity in Entitys)
                 {
@@ -58,7 +58,7 @@ namespace Console_Dungeon
                     strForPrint += $"  {index + 1}) {(Action.Actions)index}\n";
                 }
                 PrintColoredMessage(strForPrint, ConsoleColor.Yellow);
-                result[i] = (Action.Actions)ChooseAction("Choose Action ID:", Entitys[i].EntityColor);
+                result[i] = (Action.Actions)ChooseAction("Choose Action ID:", Element.ElementFirstColorDictionary[Entitys[i].ElementCode]);
                 if(((int)result[i]) > Action.numberOfActions)
                 {
                     result[i] = Action.Actions.GoIdol;

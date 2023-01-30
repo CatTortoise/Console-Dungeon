@@ -118,7 +118,7 @@ namespace Console_Dungeon
                     }
                     else
                     {
-                        temp = FightRenderer.ChooseAction($"Choose target to attack by ID:", targets[0].EntityColor);
+                        temp = FightRenderer.ChooseAction($"Choose target to attack by ID:", Element.ElementFirstColorDictionary[targets[0].ElementCode]);
                     }
                     if (temp >= targets.Length)
                     {

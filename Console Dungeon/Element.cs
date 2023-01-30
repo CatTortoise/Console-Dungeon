@@ -37,6 +37,7 @@ namespace Console_Dungeon
             #endregion
 
         }
+
         public enum ElementsTayp
         {
             Empty,
@@ -54,6 +55,7 @@ namespace Console_Dungeon
             reactionSpeed,
             toughness
         }
+
 
         static private Dictionary<Elements, char> _elementDictionary = new Dictionary<Elements, char>()
             {
@@ -74,14 +76,14 @@ namespace Console_Dungeon
                 { Elements.Empty,(char)32 },
                 { Elements.MenuIndicator, (char)187 }
             };
-        static private Dictionary<Elements, ConsoleColor> _elementForegroundColorDictionary = new Dictionary<Elements, ConsoleColor>()
+        static private Dictionary<Elements, ConsoleColor> _elementFirstColorDictionary = new Dictionary<Elements, ConsoleColor>()
             {
                 { Elements.NonVisibleArea,ConsoleColor.White },
                 { Elements.Wall, ConsoleColor.White },
                 { Elements.DoorVertical, ConsoleColor.Gray },
                 { Elements.DoorHorizontal, ConsoleColor.Gray },
                 { Elements.VisibleArea, ConsoleColor.DarkGray },
-                { Elements.Player, ConsoleColor.White },
+                { Elements.Player, ConsoleColor.Blue },
                 { Elements.Goblin, ConsoleColor.Green },
                 { Elements.Hob_Goblin, ConsoleColor.DarkGreen },
                 { Elements.Minatore, ConsoleColor.Red },
@@ -93,9 +95,28 @@ namespace Console_Dungeon
                 { Elements.Empty,ConsoleColor.White },
                 { Elements.MenuIndicator, ConsoleColor.White }
             };
-
+        static private Dictionary<Elements, ConsoleColor> _elementSecondColorDictionary = new Dictionary<Elements, ConsoleColor>()
+            {
+                { Elements.NonVisibleArea,ConsoleColor.White },
+                { Elements.Wall, ConsoleColor.White },
+                { Elements.DoorVertical, ConsoleColor.Gray },
+                { Elements.DoorHorizontal, ConsoleColor.Gray },
+                { Elements.VisibleArea, ConsoleColor.DarkGray },
+                { Elements.Player, ConsoleColor.Cyan },
+                { Elements.Goblin, ConsoleColor.Green },
+                { Elements.Hob_Goblin, ConsoleColor.DarkBlue },
+                { Elements.Minatore, ConsoleColor.Red },
+                { Elements.Mimic, ConsoleColor.Yellow },
+                { Elements.TrapArmed, ConsoleColor.Yellow },
+                { Elements.TrapDisarmed, ConsoleColor.DarkYellow },
+                { Elements.TreasureChest, ConsoleColor.Yellow },
+                { Elements.Item, ConsoleColor.Blue },
+                { Elements.Empty,ConsoleColor.White },
+                { Elements.MenuIndicator, ConsoleColor.White }
+            };
 
         public static Dictionary<Elements, char> ElementDictionary { get => _elementDictionary; private set => _elementDictionary = value; }
-        public static Dictionary<Elements, ConsoleColor> ElementForegroundColorDictionary { get => _elementForegroundColorDictionary; set => _elementForegroundColorDictionary = value; }
+        public static Dictionary<Elements, ConsoleColor> ElementFirstColorDictionary { get => _elementFirstColorDictionary; private set => _elementFirstColorDictionary = value; }
+        public static Dictionary<Elements, ConsoleColor> ElementSecondColorDictionary { get => _elementSecondColorDictionary; private set => _elementSecondColorDictionary = value; }
     }
 }

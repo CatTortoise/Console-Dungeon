@@ -24,7 +24,7 @@ namespace Console_Dungeon
                 GeneratToughness(element),
                 GeneratEntityLocation(element,map),
                 element,
-                Element.ElementForegroundColorDictionary[element] ,
+                Element.ElementFirstColorDictionary[element] ,
                 GeneratId(element)
                 );
             return entities;

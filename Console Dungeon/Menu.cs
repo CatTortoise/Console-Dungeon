@@ -24,7 +24,7 @@ namespace Console_Dungeon
 
         private static MenuType _curentMenuType;
         private static Dictionary<MenuType, Location> _startIndicatorLocationDictionary = new Dictionary<MenuType, Location> { { MenuType.ArrayDataStructures, new(0, 1) } };
-        private static Entity menuIndicator = new("MenuIndicator",true, _startIndicatorLocation, _startIndicatorLocation, Element.Elements.MenuIndicator, 1);
+        private static Entity menuIndicator = new("MenuIndicator",true, _startIndicatorLocation, _startIndicatorLocation, Element.Elements.MenuIndicator, 1,false);
 
         public static Dictionary<MenuType, string[]> Menus { get => _menus; private set => _menus = value; }
         public static Dictionary<MenuType, Location> Endlocation { get => _endlocation; private set => _endlocation = value; }
