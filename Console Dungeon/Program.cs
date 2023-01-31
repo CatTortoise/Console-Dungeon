@@ -10,6 +10,8 @@ namespace Console_Dungeon
     {
         static void Main(string[] args)
         {
+
+            Console.WriteLine();
             GameManager.StartConsoleDungeon() ;
 
         }

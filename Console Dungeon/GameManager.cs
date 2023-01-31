@@ -40,7 +40,7 @@ namespace Console_Dungeon
                         }
                             if (InputManager.InputSystem == InputManager.inputType.Game)
                             {
-                                _maps[0].MoveTo(InputManager.PlayerInput(entity), entity);
+                                _maps[0].MoveTo(InputManager.EntityInput(entity, _maps[0]), entity);
                             }
                         while (InputManager.InputSystem == InputManager.inputType.Menu)
                         {

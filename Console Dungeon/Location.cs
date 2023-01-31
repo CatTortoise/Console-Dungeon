@@ -103,6 +103,10 @@ namespace Console_Dungeon
         { 
             return this.X == compareToLocation.X && this.Y == compareToLocation.Y;
         }
+        public float CalculateDistance(Location compareToLocation)
+        {
+            return 0f;
+        }
 
     }		
 

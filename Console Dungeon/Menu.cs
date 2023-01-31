@@ -91,7 +91,7 @@ namespace Console_Dungeon
         public static void MoveIndicator()
         {
             Location location;
-            location = InputManager.PlayerInput(MenuIndicator);
+            location = InputManager.EntityInput(MenuIndicator);
             if (location.Y < _endLocation.Y  && location.Y >= _startIndicatorLocation.Y)
             {
                 MenuIndicator.MoveTo(location);

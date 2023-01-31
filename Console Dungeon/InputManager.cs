@@ -21,32 +21,49 @@ namespace Console_Dungeon
 
         public static inputType InputSystem { get => _inputSystem; set => _inputSystem = value; }
 
-        /*+GetKey()*/
-        public static Location PlayerInput(Entity entity)
+        
+        public static Location EntityInput(Entity entity, Map map)
         {
             if (entity != null && entity.IsAlive)
             {
                 Location location = entity.Location;
                 if (entity.IsPlayer)
                 {
-                    switch (InputSystem)
-                    {
-                        case inputType.Game:
-                            PlayerGameInput(ref location);
-                            break;
-                        case inputType.Menu:
-                            location = Menu.MenuIndicator.Location;
-                            PlayerMenuInput(ref location);
-                            break;
-                    }
+                    location = EntityInput(entity);
+                }
+                else
+                {
+                    _keyInput = NpcActions.MoveNpc(entity, map);
+                    EntityGameInput(ref location, _keyInput);
                 }
                 return location;
             }
             return entity.Location;
 
         }
+        public static Location EntityInput(Entity entity)
+        {
+            if (entity != null && entity.IsAlive)
+            {
+                Location location = entity.Location;
+                switch (InputSystem)
+                {
+                    case inputType.Game:
+                        EntityGameInput(ref location);
+                        break;
+                    case inputType.Menu:
+                        location = Menu.MenuIndicator.Location;
+                        PlayerMenuInput(ref location);
+                        break;
+                }
+                return location;
+            }
+            return entity.Location;
 
-        private static void PlayerGameInput(ref Location location)
+        }
+        
+
+        private static void EntityGameInput(ref Location location)
         {
             _keyInput = Console.ReadKey(true).Key;
             switch (_keyInput)
@@ -70,7 +87,7 @@ namespace Console_Dungeon
                     location.X += 1;
                     break;
                 default:
-                    PlayerGameInput(ref location);
+                    EntityGameInput(ref location);
                     break;
             }
 
@@ -101,6 +118,29 @@ namespace Console_Dungeon
                     break;
             }
             
+        }
+        private static void EntityGameInput(ref Location location, ConsoleKey consoleKey)
+        {
+            
+            switch (consoleKey)
+            {
+                case ConsoleKey.UpArrow:
+                    location.Y += -1;
+                    break;
+                case ConsoleKey.DownArrow:
+                    location.Y += +1;
+                    break;
+                case ConsoleKey.LeftArrow:
+                    location.X += -1;
+                    break;
+                case ConsoleKey.RightArrow:
+                    location.X += 1;
+                    break;
+                default:
+                    EntityGameInput(ref location);
+                    break;
+            }
+
         }
     }
 }
