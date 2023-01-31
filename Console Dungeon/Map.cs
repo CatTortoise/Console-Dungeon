@@ -55,9 +55,13 @@ namespace Console_Dungeon
             {
                 MapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Empty;
                 entity.MoveTo(location);
-                Renderer.EntitiesQueue(entity, Renderer.Screen.Map);
                 GenerateCollisionsEntityMap();
             }
+            else
+            {
+                entity.MoveTo(entity.Location);
+            }
+            Renderer.EntitiesQueue(entity, Renderer.Screen.Map);
         }
 
      

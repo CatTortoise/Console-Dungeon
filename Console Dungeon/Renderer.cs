@@ -80,7 +80,7 @@ namespace Console_Dungeon
                     $"{entity.Name} for Queue",
                     false,
                     new(res.X + entity.Location.X, res.Y + entity.Location.Y),
-                    new(res.X + entity.PreviousLocation.X, res.Y + entity.PreviousLocation.Y),
+                    myTurn? new(res.X + entity.Location.X, res.Y + entity.Location.Y) : new(res.X + entity.PreviousLocation.X, res.Y + entity.PreviousLocation.Y),
                     entity.ElementCode,
                     entity.Id,
                     myTurn
