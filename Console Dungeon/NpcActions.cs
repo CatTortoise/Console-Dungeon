@@ -15,6 +15,7 @@ namespace Console_Dungeon
                 case Element.Elements.Player:
                     return RandomInput();
                 case Element.Elements.Goblin:
+                    return LookAround( entity,  map);
                     break;
                 case Element.Elements.Hob_Goblin:
                     break;
@@ -51,27 +52,32 @@ namespace Console_Dungeon
 
         public static ConsoleKey LookAround(Entity entity, Map map)
         {
-            Location closestfriendly = new();
+            Location closestFriendly = new();
             Location closestHostile = new();
-            for (int x = -entity.Senses; x <= entity.Senses; x++)
+            for (int x = entity.Location.X - entity.Senses; x <= entity.Location.X + entity.Senses; x++)
             {
-                for (int y = -entity.Senses; y <= entity.Senses; y++)
+                for (int y = entity.Location.Y - entity.Senses; y <= entity.Location.Y + entity.Senses; y++)
                 {
                     foreach(Entity mapEntity in map.MapEntities)
                     {
                         if (mapEntity.Location.CompareLocations(new(x, y)))
                         {
-                            if (entity.CollidedWithHostile(mapEntity.ElementCode))
+                            if (mapEntity.CollidedWithHostile(entity.ElementCode))
                             {
-                                if(closestHostile.X  == 0 || closestHostile.CalculateDistance(entity.Location) < mapEntity.Location.CalculateDistance(entity.Location))
+                                float hostileDistance = mapEntity.Location.CalculateDistance(entity.Location);
+                                if (closestHostile.X  == 0 ||  hostileDistance < mapEntity.Location.CalculateDistance(entity.Location)) 
                                 {
                                     closestHostile = new(x, y);
-                                }
-                                
+                                }                                
                             }
-                            else if (closestfriendly.X == 0 || closestfriendly.CalculateDistance(entity.Location) < mapEntity.Location.CalculateDistance(entity.Location))
+                            else if (entity != null)
                             {
-                                closestfriendly = new(x, y);
+                                float friendlyDistance = closestHostile.CalculateDistance(entity.Location);
+                                if (closestFriendly.X == 0 || friendlyDistance < mapEntity.Location.CalculateDistance(entity.Location))
+                                {
+                                    closestFriendly = new(x, y);        
+                                }
+                                    
                             }
                         }
                         
@@ -79,7 +85,7 @@ namespace Console_Dungeon
                     
                 }
             }
-            return PostmateBehaviour(entity, closestfriendly, closestHostile);
+            return PostmateBehaviour(entity, closestFriendly, closestHostile);
         }
         public static ConsoleKey PostmateBehaviour(Entity entity, Location closestfriendly ,Location closestHostile)
         {
@@ -88,6 +94,35 @@ namespace Console_Dungeon
                 case Element.Elements.Player:
                     return RandomInput();
                 case Element.Elements.Goblin:
+                    if( entity.Location.CalculateDistance(closestfriendly) <= 100)
+                    {
+                        if(closestHostile.X != 0)
+                        {
+                          if(entity.Location.X - closestHostile.X < entity.Location.Y - closestHostile.Y)
+                            {
+                                if(entity.Location.X > closestHostile.X)
+                                {
+                                    return ConsoleKey.LeftArrow;
+                                }
+                                else
+                                {
+                                    return ConsoleKey.RightArrow;
+                                }
+                            }
+                            else
+                            {
+                                if (entity.Location.Y > closestHostile.Y)
+                                {
+                                    return ConsoleKey.DownArrow;
+                                }
+                                else
+                                {
+                                    return ConsoleKey.UpArrow;
+                                }
+                            }  
+                        }
+
+                    }
                     break;
                 case Element.Elements.Hob_Goblin:
                     break;
@@ -98,6 +133,7 @@ namespace Console_Dungeon
                 default:
                     break;
             }
+            return RandomInput();
         }
 
         public static void AutomaticActionSelection(Entity[] acters, Entity[] targets)

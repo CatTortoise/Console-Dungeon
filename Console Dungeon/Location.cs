@@ -105,7 +105,9 @@ namespace Console_Dungeon
         }
         public float CalculateDistance(Location compareToLocation)
         {
-            return 0f;
+            float xDistance = this.X - compareToLocation.X;
+            float yDistance = this.Y - compareToLocation.Y;
+            return MathF.Sqrt(xDistance * xDistance + yDistance * yDistance);
         }
 
     }		

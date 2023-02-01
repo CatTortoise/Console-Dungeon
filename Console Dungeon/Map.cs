@@ -35,12 +35,12 @@ namespace Console_Dungeon
         private void PopulateMap(int number)
         {
             _mapEntities = new Entity[number];
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < 1; i++)
             {
                 _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Player, this));
                 GenerateCollisionsEntityMap();
             }
-            for (int i = 4; i < number; i++)
+            for (int i = 1; i < number; i++)
             {
                 _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Goblin, this));
                 GenerateCollisionsEntityMap();
