@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Console_Dungeon
 {
@@ -94,17 +95,20 @@ namespace Console_Dungeon
                 case Element.Elements.Player:
                     return RandomInput();
                 case Element.Elements.Goblin:
-                    if( entity.Location.CalculateDistance(closestfriendly) <= 100)
+                    float distance = entity.Location.CalculateDistance(closestfriendly);
+                    Debug.WriteLineIf(distance > 0, $"{entity.Location.X}, {entity.Location.Y}: {distance}");
+                    if (distance > 0 && distance <= 3 )
                     {
                         if(closestHostile.X != 0)
                         {
-                          if(entity.Location.X - closestHostile.X < entity.Location.Y - closestHostile.Y)
+                            distance = entity.Location.CalculateDistance(closestHostile.X,0);
+                            if (distance != 0 && distance < entity.Location.CalculateDistance(0,closestHostile.Y))
                             {
                                 if(entity.Location.X > closestHostile.X)
                                 {
                                     return ConsoleKey.LeftArrow;
                                 }
-                                else
+                                else 
                                 {
                                     return ConsoleKey.RightArrow;
                                 }
@@ -113,15 +117,41 @@ namespace Console_Dungeon
                             {
                                 if (entity.Location.Y > closestHostile.Y)
                                 {
-                                    return ConsoleKey.DownArrow;
-                                }
-                                else
-                                {
                                     return ConsoleKey.UpArrow;
+                                }
+                                else 
+                                {
+                                    return ConsoleKey.DownArrow;
                                 }
                             }  
                         }
 
+                    }
+                    else if (closestHostile.X != 0)
+                    {
+                        distance = entity.Location.CalculateDistance(closestHostile.X, 0);
+                        if (distance != 0 && distance < entity.Location.CalculateDistance(0, closestHostile.Y))
+                        {
+                            if (entity.Location.X > closestHostile.X)
+                            {
+                                return ConsoleKey.RightArrow;
+                            }
+                            else 
+                            {
+                                return ConsoleKey.LeftArrow;
+                            }
+                        }
+                        else if(entity.Location.Y < closestHostile.Y)
+                        {
+                            if (entity.Location.Y > closestHostile.Y)
+                            {
+                                return ConsoleKey.DownArrow;
+                            }
+                            else
+                            {
+                                return ConsoleKey.UpArrow;
+                            }
+                        }
                     }
                     break;
                 case Element.Elements.Hob_Goblin:
