@@ -342,7 +342,11 @@ namespace Console_Dungeon
         }
         private static bool ChecksIfLocationIsAvailable(Location location , Map map)
         {
-            return map.MapCollisions[location.X,location.Y] == Element.ElementsTayp.Empty;
+            if (map.MapBorder.LocationBottomRight.X > location.X || map.MapBorder.LocationBottomRight.X > location.Y)
+            {
+                return map.MapCollisions[location.X, location.Y] == Element.ElementsTayp.Empty;
+            }
+            return false;
         }
 
         private static bool ChecksIfLocationIsAvailable(Location TopLeft, Location BottomRight, Map map)

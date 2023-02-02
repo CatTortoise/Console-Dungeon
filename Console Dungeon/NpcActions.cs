@@ -95,64 +95,68 @@ namespace Console_Dungeon
                 case Element.Elements.Player:
                     return RandomInput();
                 case Element.Elements.Goblin:
+                    if (closestHostile.X != 0)
+                    {
                     float distance = entity.Location.CalculateDistance(closestfriendly);
                     Debug.WriteLineIf(distance > 0, $"{entity.Location.X}, {entity.Location.Y}: {distance}");
-                    if (distance > 0 && distance <= 3 )
-                    {
-                        if(closestHostile.X != 0)
+                    Debug.WriteLineIf(distance > 0, $"{distance > 0 && distance <= 3} {closestfriendly.X},{closestfriendly.Y}");
+
+                        if (distance > 0 && distance <= 3 )
                         {
                             distance = entity.Location.CalculateDistance(closestHostile.X,0);
                             if (distance != 0 && distance < entity.Location.CalculateDistance(0,closestHostile.Y))
                             {
                                 if(entity.Location.X > closestHostile.X)
                                 {
-                                    return ConsoleKey.LeftArrow;
+                                    return ConsoleKey.RightArrow;
                                 }
                                 else 
                                 {
-                                    return ConsoleKey.RightArrow;
+                                    return ConsoleKey.LeftArrow;
                                 }
                             }
                             else
                             {
                                 if (entity.Location.Y > closestHostile.Y)
                                 {
-                                    return ConsoleKey.UpArrow;
+                                    return ConsoleKey.DownArrow;
                                 }
                                 else 
                                 {
-                                    return ConsoleKey.DownArrow;
+                                    return ConsoleKey.UpArrow;
                                 }
                             }  
                         }
-
-                    }
-                    else if (closestHostile.X != 0)
-                    {
-                        distance = entity.Location.CalculateDistance(closestHostile.X, 0);
-                        if (distance != 0 && distance < entity.Location.CalculateDistance(0, closestHostile.Y))
+                        else
                         {
-                            if (entity.Location.X > closestHostile.X)
+                            float xDistance = entity.Location.CalculateDistance(closestHostile.X, 0);
+                            float yDistance = entity.Location.CalculateDistance(0,closestHostile.Y);
+                            if (yDistance != 0 && xDistance < yDistance)
                             {
-                                return ConsoleKey.RightArrow;
-                            }
-                            else 
-                            {
-                                return ConsoleKey.LeftArrow;
-                            }
-                        }
-                        else if(entity.Location.Y < closestHostile.Y)
-                        {
-                            if (entity.Location.Y > closestHostile.Y)
-                            {
-                                return ConsoleKey.DownArrow;
+                                if (entity.Location.X > closestHostile.X)
+                                {
+                                    return ConsoleKey.RightArrow;
+                                }
+                                else
+                                {
+                                    return ConsoleKey.LeftArrow;
+                                }
                             }
                             else
                             {
-                                return ConsoleKey.UpArrow;
+                                if (entity.Location.Y > closestHostile.Y)
+                                {
+                                    return ConsoleKey.DownArrow;
+                                }
+                                else
+                                {
+                                    return ConsoleKey.UpArrow;
+                                }
                             }
                         }
+
                     }
+                    
                     break;
                 case Element.Elements.Hob_Goblin:
                     break;

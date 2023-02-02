@@ -109,11 +109,11 @@ namespace Console_Dungeon
             float xDistance = this.X - compareToLocation.X;
             float yDistance = this.Y - compareToLocation.Y;
             float res = 0;
-            if (xDistance == 0)
+            if (compareToLocation.X == 0)
             {
                 res = yDistance;
             }
-            else if (yDistance == 0)
+            else if (compareToLocation.Y == 0)
             {
                 res = xDistance;
             }
@@ -121,7 +121,7 @@ namespace Console_Dungeon
             {
                 res = MathF.Sqrt(xDistance * xDistance + yDistance * yDistance);
             }
-            return res;
+            return Math.Abs( res);
         }
 
     }		
