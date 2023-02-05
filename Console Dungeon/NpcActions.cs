@@ -14,14 +14,13 @@ namespace Console_Dungeon
             switch (entity.ElementCode)
             {
                 case Element.Elements.Player:
-                    return RandomInput();
+                    return LookAround(entity, map);
                 case Element.Elements.Goblin:
                     return LookAround( entity,  map);
-                    break;
                 case Element.Elements.Hob_Goblin:
-                    break;
+                    return LookAround(entity, map);
                 case Element.Elements.Minatore:
-                    break;
+                    return LookAround(entity, map);
                 case Element.Elements.Mimic:
                     break;
                 default:
@@ -61,24 +60,23 @@ namespace Console_Dungeon
                 {
                     foreach(Entity mapEntity in map.MapEntities)
                     {
-                        if (mapEntity.Location.CompareLocations(new(x, y)))
+                        if (mapEntity.Location.CompareLocations(new(x, y)) && !entity.Location.CompareLocations(mapEntity.Location))
                         {
-                            if (mapEntity.CollidedWithHostile(entity.ElementCode))
+                            if ( mapEntity.CollidedWithHostile(entity.ElementCode))
                             {
                                 float hostileDistance = mapEntity.Location.CalculateDistance(entity.Location);
-                                if (closestHostile.X  == 0 ||  hostileDistance < mapEntity.Location.CalculateDistance(entity.Location)) 
+                                if (hostileDistance <= closestHostile.CalculateDistance(entity.Location)) 
                                 {
-                                    closestHostile = new(x, y);
+                                    closestHostile = mapEntity.Location;
                                 }                                
                             }
-                            else if (entity != null)
+                            else
                             {
-                                float friendlyDistance = closestHostile.CalculateDistance(entity.Location);
-                                if (closestFriendly.X == 0 || friendlyDistance < mapEntity.Location.CalculateDistance(entity.Location))
+                                float friendlyDistance = mapEntity.Location.CalculateDistance(entity.Location);
+                                if (friendlyDistance <= closestFriendly.CalculateDistance(entity.Location))
                                 {
-                                    closestFriendly = new(x, y);        
+                                    closestFriendly = mapEntity.Location;
                                 }
-                                    
                             }
                         }
                         
@@ -86,9 +84,9 @@ namespace Console_Dungeon
                     
                 }
             }
-            return PostmateBehaviour(entity, closestFriendly, closestHostile);
+            return EntityBehaviour(entity, closestFriendly, closestHostile);
         }
-        public static ConsoleKey PostmateBehaviour(Entity entity, Location closestfriendly ,Location closestHostile)
+        private static ConsoleKey EntityBehaviour(Entity entity, Location closestfriendly ,Location closestHostile)
         {
             switch (entity.ElementCode)
             {
@@ -97,66 +95,45 @@ namespace Console_Dungeon
                 case Element.Elements.Goblin:
                     if (closestHostile.X != 0)
                     {
-                    float distance = entity.Location.CalculateDistance(closestfriendly);
-                    Debug.WriteLineIf(distance > 0, $"{entity.Location.X}, {entity.Location.Y}: {distance}");
-                    Debug.WriteLineIf(distance > 0, $"{distance > 0 && distance <= 3} {closestfriendly.X},{closestfriendly.Y}");
-
-                        if (distance > 0 && distance <= 3 )
+                        float distance = entity.Location.CalculateDistance(closestfriendly);
+                        float xDistance = entity.Location.CalculateDistance(closestHostile.X, 0);
+                        float yDistance = entity.Location.CalculateDistance(0, closestHostile.Y);
+                        if (xDistance != 0 &&( yDistance == 0 || xDistance < yDistance))
                         {
-                            distance = entity.Location.CalculateDistance(closestHostile.X,0);
-                            if (distance != 0 && distance < entity.Location.CalculateDistance(0,closestHostile.Y))
+                            if (entity.Location.X > closestHostile.X)
                             {
-                                if(entity.Location.X > closestHostile.X)
-                                {
-                                    return ConsoleKey.RightArrow;
-                                }
-                                else 
-                                {
+                                if (distance > 0 && distance <= 2)
                                     return ConsoleKey.LeftArrow;
-                                }
+                                else
+                                    return ConsoleKey.RightArrow;
                             }
                             else
                             {
-                                if (entity.Location.Y > closestHostile.Y)
-                                {
-                                    return ConsoleKey.DownArrow;
-                                }
-                                else 
-                                {
-                                    return ConsoleKey.UpArrow;
-                                }
-                            }  
+                                if (distance > 0 && distance <= 2)
+                                    return ConsoleKey.RightArrow;
+                                else
+                                    return ConsoleKey.LeftArrow;
+                            }
                         }
                         else
                         {
-                            float xDistance = entity.Location.CalculateDistance(closestHostile.X, 0);
-                            float yDistance = entity.Location.CalculateDistance(0,closestHostile.Y);
-                            if (yDistance != 0 && xDistance < yDistance)
+                            if (entity.Location.Y > closestHostile.Y)
                             {
-                                if (entity.Location.X > closestHostile.X)
-                                {
-                                    return ConsoleKey.RightArrow;
-                                }
+                                if (distance > 0 && distance <= 3)
+                                    return ConsoleKey.UpArrow;
                                 else
-                                {
-                                    return ConsoleKey.LeftArrow;
-                                }
+                                    return ConsoleKey.DownArrow;
                             }
                             else
                             {
-                                if (entity.Location.Y > closestHostile.Y)
-                                {
+                                if (distance > 0 && distance <= 3)
                                     return ConsoleKey.DownArrow;
-                                }
                                 else
-                                {
                                     return ConsoleKey.UpArrow;
-                                }
                             }
                         }
 
                     }
-                    
                     break;
                 case Element.Elements.Hob_Goblin:
                     break;
@@ -220,6 +197,86 @@ namespace Console_Dungeon
                     Action.GoIdol(acter);
                     break;
             }
+        }
+
+        private static ConsoleKey ChaseHostile(Entity entity,Location closestHostile)
+        {
+            if (closestHostile.X != 0)
+            {
+                float xDistance = entity.Location.CalculateDistance(closestHostile.X, 0);
+                float yDistance = entity.Location.CalculateDistance(0, closestHostile.Y);
+                if (xDistance != 0 && (yDistance == 0 || xDistance < yDistance))
+                {
+                    if (entity.Location.X > closestHostile.X)
+                    {
+                        return ConsoleKey.LeftArrow;
+                    }
+                    else
+                    {
+                        return ConsoleKey.RightArrow;
+                    }
+                }
+                else
+                {
+                    if (entity.Location.Y > closestHostile.Y)
+                    {
+                        return ConsoleKey.UpArrow;
+                    }
+                    else
+                    {
+                        return ConsoleKey.DownArrow;
+                    }
+
+                }
+            }
+                return RandomInput();
+            }
+
+        private static ConsoleKey GoblinMoveBehaviour(Entity entity, Location closestfriendly, Location closestHostile)
+        {
+            if (closestHostile.X != 0)
+            {
+                float distance = entity.Location.CalculateDistance(closestfriendly);
+                float xDistance = entity.Location.CalculateDistance(closestHostile.X, 0);
+                float yDistance = entity.Location.CalculateDistance(0, closestHostile.Y);
+                if (xDistance != 0 && (yDistance == 0 || xDistance < yDistance))
+                {
+                    if (entity.Location.X > closestHostile.X)
+                    {
+                        if (distance > 0 && distance <= 3)
+                            return ConsoleKey.LeftArrow;
+                        else
+                            return ConsoleKey.RightArrow;
+                    }
+                    else
+                    {
+                        if (distance > 0 && distance <= 3)
+                            return ConsoleKey.RightArrow;
+                        else
+                            return ConsoleKey.LeftArrow;
+                    }
+                }
+                else
+                {
+                    if (entity.Location.Y > closestHostile.Y)
+                    {
+
+                        if (distance > 0 && distance <= 3)
+                            return ConsoleKey.UpArrow;
+                        else
+                            return ConsoleKey.DownArrow;
+                    }
+                    else
+                    {
+                        if (distance > 0 && distance <= 3)
+                            return ConsoleKey.DownArrow;
+                        else
+                            return ConsoleKey.UpArrow;
+                    }
+                }
+
+            }
+            return RandomInput();
         }
     }
 }
