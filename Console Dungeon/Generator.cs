@@ -377,6 +377,50 @@ namespace Console_Dungeon
         #endregion
 
         #region
+        public static Interruptible GeneratInterruptible(Element.Elements element, Map map)
+        {
+            Interruptible interruptible = new(
+               $"{element} {GeneratId(element)}",
+                element,
+                MatchItemTayp(element),
+                GeneratInterruptibleLocation(element, map),
+                MatchIsHidden(element),
+                false,
+                MatchIsBlocking(element)
+               ) ; 
+            return interruptible
+        }
+
+        private static bool MatchIsBlocking(Element.Elements element)
+        {
+            return true;
+        }
+
+        private static bool MatchIsHidden(Element.Elements element)
+        {
+            if(element == Element.Elements.TrapArmed)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        private static Location GeneratInterruptibleLocation(Element.Elements element, Map map)
+        {
+            if(element == Element.Elements.DoorHorizontal || element == Element.Elements.DoorVertical)
+            {
+                
+            }
+        }
+
+        private static object MatchItemTayp(Element.Elements element)
+        {
+            throw new NotImplementedException();
+        }
+
         static public Weapon GeneratWeapon(Element.Elements WhatGenerates)
         {
             int min = 0;
@@ -409,6 +453,8 @@ namespace Console_Dungeon
 
             return new Weapon(min, max);
         }
+
+
         #endregion
 
         private static int GeneratId(Element.Elements element)

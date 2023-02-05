@@ -14,7 +14,7 @@ namespace Console_Dungeon
         private Envaironment _mapBorder;
         private Envaironment[] _mapEnvironments;
         private Entity[] _mapEntities;
-        private Interruptible[] _mapInterruptibles;
+        private Dictionary<Location, Interruptible> _mapInterruptibles;
         Dictionary<Location, bool> _entityLocationsForFight;
         Stack<Location> _ScanLocationsForFight;
         private bool _isCleared;
@@ -23,14 +23,16 @@ namespace Console_Dungeon
         {
             GenerateMap(30,60);
             PopulateMap(10);
+            SpreadInterruptibles(MapEnvironments.Length, 4);
             LoadeAllMapElements();
         }
 
         public Entity[] MapEntities { get => _mapEntities; private set => _mapEntities = value; }
         public Location MapSize { get => _mapSize; private set => _mapSize = value; }
-        internal ElementsTayp[,] MapCollisions { get => _mapCollisions; private set => _mapCollisions = value; }
-        internal Envaironment[] MapEnvironments { get => _mapEnvironments; private set => _mapEnvironments = value; }
-        internal Envaironment MapBorder { get => _mapBorder; private set => _mapBorder = value; }
+        public ElementsTayp[,] MapCollisions { get => _mapCollisions; private set => _mapCollisions = value; }
+        public Envaironment[] MapEnvironments { get => _mapEnvironments; private set => _mapEnvironments = value; }
+        public Envaironment MapBorder { get => _mapBorder; private set => _mapBorder = value; }
+        public Dictionary<Location, Interruptible> MapInterruptibles { get => _mapInterruptibles; private set => _mapInterruptibles = value; }
 
         private void PopulateMap(int number)
         {
@@ -82,6 +84,11 @@ namespace Console_Dungeon
                 MapEnvironments[i] = Generator.GeneratEnvaironment(Elements.Wall, 3, 6,this);
                 GenerateCollisionsEnvaironmentMap();
             }
+        }
+
+        private void SpreadInterruptibles(int Buildings , int OtherInstructables  )
+        {
+            throw new NotImplementedException();
         }
 
         private void LoadeAllMapElements()
@@ -136,6 +143,13 @@ namespace Console_Dungeon
                 }
             }
         }
+        private void GenerateCollisions()
+        {
+            foreach(Interruptible interruptible in MapInterruptibles.Values)
+            {
+                MapCollisions[interruptible.Location.X, interruptible.Location.Y] = ElementsTayp.Interruptibles;
+            }
+        }
 
 
         private bool CheckCollision(Location location,Entity entity)
@@ -164,10 +178,13 @@ namespace Console_Dungeon
                     }
                     break;
                 case ElementsTayp.Interruptibles:
+                        collisions = MapInterruptibles[location].IsBlocking;
+                        MapInterruptibles[location].InteractWith(entity);
                     break;
             }
             return collisions;
         }
+
 
         private Entity[] EntitiesCollisions(Location StartingLocation)
         {

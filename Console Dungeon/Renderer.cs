@@ -33,8 +33,9 @@ namespace Console_Dungeon
             Location _menuScreens;
             Console.SetWindowSize(Location.Xmax, Location.Ymax);
             Console.SetBufferSize(Location.Xmax, Location.Ymax);
-            int screenDivaider = (int)Math.Ceiling(Location.Xmax * 0.2);
-            
+            int screenDivaiderX = (int)Math.Ceiling(Location.Xmax * 0.2);
+            int screenDivaiderY = (int)Math.Ceiling(Location.Ymax * 0.33);
+
             _screens.Add(Screen.Window, new("Window", Elements.Empty, new(), new(Location.Xmax, Location.Ymax)));
 
             _screens.Add(Screen.Log,
@@ -42,7 +43,7 @@ namespace Console_Dungeon
                     "Log",
                     Elements.VisibleArea,
                     new(_screens[Screen.Window].LocationTopLeft.X ,_screens[Screen.Window].LocationTopLeft.Y),
-                    new(screenDivaider, Location.Ymax)
+                    new(screenDivaiderX, Location.Ymax)
                 ));
             EnvaironmentQueue(_screens[Screen.Log], Screen.Window);
 
@@ -50,7 +51,7 @@ namespace Console_Dungeon
                 new("Map",
                     Elements.VisibleArea, 
                     new(_screens[Screen.Log].LocationBottomRight.X, _screens[Screen.Log].LocationTopLeft.Y),
-                    new(_screens[Screen.Log].LocationBottomRight.X + screenDivaider * 3, Location.Ymax)
+                    new(_screens[Screen.Log].LocationBottomRight.X + screenDivaiderX * 3, Location.Ymax)
                     ));
             EnvaironmentQueue(_screens[Screen.Map], Screen.Window);
 
@@ -59,7 +60,7 @@ namespace Console_Dungeon
                     "Menu",
                     Elements.VisibleArea,
                     new(_screens[Screen.Map].LocationBottomRight.X, _screens[Screen.Map].LocationTopLeft.Y),
-                    new(_screens[Screen.Map].LocationBottomRight.X + screenDivaider, Location.Ymax)
+                    new(_screens[Screen.Map].LocationBottomRight.X + screenDivaiderX, Location.Ymax)
                     ));
             EnvaironmentQueue(_screens[Screen.Menu], Screen.Window);
         }

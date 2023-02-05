@@ -16,14 +16,14 @@
 //            Menu
 //        }
 //        private ScreenType _screen;  
-//        private Element.Elements _ElementCode;
+//        private Element.Elements _elementCode;
 //        private Location _locationTopLeft;
 //        private Location _locationBottomRight;
 
 
 //        public Location LocationTopLeft { get => _locationTopLeft; private set => _locationTopLeft = value; }
 //        public Location LocationBottomRight { get => _locationBottomRight; private set => _locationBottomRight = value; }
-//        public Element.Elements ElementCode { get => _ElementCode; private set => _ElementCode = value; }
+//        public Element.Elements ElementCode { get => _elementCode; private set => _elementCode = value; }
 //        public string Name { get => _name; private set => _name = value; }
 //        internal ScreenType Screen { get => _screen; set => _screen = value; }
 
