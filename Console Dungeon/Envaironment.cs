@@ -12,7 +12,6 @@ namespace Console_Dungeon
         private Element.Elements _ElementCode;
         private Location _locationTopLeft;
         private Location _locationBottomRight;
-        private bool hasADoor;
 
         public Location LocationTopLeft { get => _locationTopLeft; private set => _locationTopLeft = value; }
         public Location LocationBottomRight { get => _locationBottomRight; private set => _locationBottomRight = value; }

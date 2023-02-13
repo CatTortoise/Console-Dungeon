@@ -19,15 +19,22 @@ namespace Console_Dungeon
         private static Envaironment _logeLocation;
         private static Dictionary<Screen, Envaironment> _screens = new Dictionary<Screen, Envaironment>();
         private static Envaironment _menuLocation;
+
         private static Queue<Entity> _entitiesMapQueue = new Queue<Entity>(10);
         private static Queue<Interruptible> _interruptiblesMapQueue = new Queue<Interruptible>(10);
-
         private static Queue<Envaironment> _envaironmentsMapQueue = new Queue<Envaironment>(10);
+
         private static Queue<Envaironment> _logeScreenQueue = new Queue<Envaironment>(10);
         private static Queue<Envaironment> _MenuScreenQueue = new Queue<Envaironment>(10);
         private static bool _printeMenu = false;
-       
 
+        
+        public static Location MaxScreenSize(Screen screen)
+        {
+            Location location = new(_screens[screen].LocationBottomRight.X - _screens[screen].LocationTopLeft.X,
+                                    _screens[screen].LocationBottomRight.Y - _screens[screen].LocationTopLeft.Y);
+            return location;
+        }
         public static void SetScreens()
         {
             Location _mapScreens;

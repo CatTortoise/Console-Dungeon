@@ -9,18 +9,21 @@ namespace Console_Dungeon
     static class GameManager
     {
         private static Map[] _maps = new Map[10];
-        
+        private static int _currentMap = 0;
+        private static int _nextNewMap = 0;
 
         public static void StartConsoleDungeon()
         {
-           
             Console.CursorVisible = false;
             Renderer.SetScreens();
             Menu.SetMenu(Menu.MenuType.ArrayDataStructures);
             //Renderer.PrinteMenu();
-            _maps[0] = new Map();
+            NewMap();
             Renderer.Render();
             GameLoop();
+        }
+        public static void ChangedFloor()
+        {
 
         }
 
@@ -52,6 +55,23 @@ namespace Console_Dungeon
                
             } while(true); 
             
+        }
+        private static void NewMap()
+        {
+            int minSize = Random.Shared.Next(5, Location.Ymax);
+            int maxSize = Random.Shared.Next(minSize, Location.Ymax);
+            if(_currentMap == _nextNewMap) 
+            { 
+                _maps[_currentMap] = new Map(minSize, maxSize, 4 ,minSize / 3);
+            }
+            else
+            {
+                _maps[_nextNewMap] = new Map(minSize, maxSize, FilterPlayers(), minSize / 3, _nextNewMap);
+            }
+        }
+        private static Entity[] FilterPlayers()
+        {
+            return _maps[_currentMap].MapEntities.Where(entity => entity.IsPlayer).ToArray();
         }
     }
 }

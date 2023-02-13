@@ -19,11 +19,26 @@ namespace Console_Dungeon
         private Stack<Location> _ScanLocationsForFight;
         private bool _isCleared;
 
-        public Map()
+
+        /// <summary>
+        /// This map constructor Only to be used for the first map 
+        /// </summary>
+        /// <param name="minMapSize"></param>
+        /// <param name="maxMapSize"></param>
+        /// <param name="numberOfPlayer"></param>
+        /// <param name="numberOfNpc"></param>
+        public Map(int minMapSize, int maxMapSize, int numberOfPlayer, int numberOfNpc)
         {
-            GenerateMap(30,60);
+            GenerateMap(minMapSize, maxMapSize);
             SpreadInterruptibles(MapEnvironments.Length);
-            PopulateMap(10);
+            PopulateMap(numberOfPlayer, numberOfNpc);
+            LoadeAllMapElements();
+        }
+        public Map(int minMapSize, int maxMapSize, Entity[] players, int numberOfNpc,int numberOfHobGoblins)
+        {
+            GenerateMap(minMapSize, maxMapSize);
+            SpreadInterruptibles(MapEnvironments.Length);
+            PopulateMap(players, numberOfNpc, numberOfHobGoblins);
             LoadeAllMapElements();
         }
 
@@ -34,20 +49,42 @@ namespace Console_Dungeon
         public Envaironment MapBorder { get => _mapBorder; private set => _mapBorder = value; }
         public Dictionary<Location, Interruptible> MapInterruptibles { get => _mapInterruptibles; private set => _mapInterruptibles = value; }
 
-        private void PopulateMap(int number)
+        private void PopulateMap(int numberOfPlayer,int numberOfNpc)
         {
-            _mapEntities = new Entity[number];
-            for (int i = 0; i < 1; i++)
+            
+            _mapEntities = new Entity[numberOfPlayer + numberOfNpc];
+            for (int i = 0; i < numberOfPlayer; i++)
             {
                 _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Player, this));
                 GenerateCollisionsEntityMap();
             }
-            for (int i = 1; i < number; i++)
+            for (int i = numberOfPlayer; i < _mapEntities.Length; i++)
             {
                 _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Goblin, this));
                 GenerateCollisionsEntityMap();
             }
             
+        }
+        private void PopulateMap(Entity[] players, int numberOfNpc, int numberOfHobGoblins)
+        {
+
+            _mapEntities = new Entity[players.Length + numberOfNpc];
+            for (int i = 0; i < players.Length; i++)
+            {
+                _mapEntities[i] = players[i];
+                GenerateCollisionsEntityMap();
+            }
+            for (int i = players.Length; i < _mapEntities.Length - numberOfHobGoblins; i++)
+            {
+                _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Goblin, this));
+                GenerateCollisionsEntityMap();
+            }
+            for(int i = _mapEntities.Length - numberOfHobGoblins; i < numberOfHobGoblins; i++)
+            {
+                _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Hob_Goblin, this));
+                GenerateCollisionsEntityMap();
+            }
+
         }
 
         public void MoveTo(Location location,Entity entity)
@@ -70,6 +107,19 @@ namespace Console_Dungeon
 
         private void GenerateMap(int minMapSize,int maxMapSize)
         {
+            Location maxLocation = Renderer.MaxScreenSize(Renderer.Screen.Map);
+            if (minMapSize < 0 || minMapSize > maxMapSize || maxMapSize > maxLocation.X || maxMapSize > Location.Ymax)
+            {
+                if (maxLocation.X >= maxLocation.Y)
+                {
+                    maxMapSize = maxLocation.X;
+                }
+                else
+                {
+                    maxMapSize = maxLocation.Y;
+                }
+                minMapSize = maxMapSize;
+            }
             int numberOfEnvaironments;
             MapSize = new(maxMapSize, maxMapSize);
             MapBorder = new Envaironment(Generator.GeneratEnvaironment(Elements.Wall, minMapSize, maxMapSize, this));
