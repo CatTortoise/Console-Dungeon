@@ -23,6 +23,7 @@ namespace Console_Dungeon
             Mimic,
             #endregion
             #region Interruptibles
+            Door,
             DoorVertical,
             DoorHorizontal,
             TrapArmed,
@@ -67,8 +68,8 @@ namespace Console_Dungeon
                 { Elements.Hob_Goblin, (char)71 },
                 { Elements.Minatore, (char)77 },
                 { Elements.Mimic, (char)63 },
-                { Elements.DoorVertical, (char)124 },
-                { Elements.DoorHorizontal, (char)95 },
+                { Elements.DoorVertical, (char)95 },
+                { Elements.DoorHorizontal, (char)124 },
                 { Elements.TrapArmed, (char)15 },
                 { Elements.TrapDisarmed, (char)42 },
                 { Elements.TreasureChest, (char)63 },

@@ -99,9 +99,10 @@ namespace Console_Dungeon
         /// <summary>
         /// Returns true if both locations are the same 
         /// </summary>
-        public bool CompareLocations(Location compareToLocation) 
-        { 
-            return this.X == compareToLocation.X && this.Y == compareToLocation.Y;
+        public bool CompareLocations(Location compareToLocation) => CompareLocations(compareToLocation.X, compareToLocation.Y);
+        public bool CompareLocations(int x, int y)
+        {
+            return this.X == x && this.Y == y;
         }
         public float CalculateDistance(int x, int y) => CalculateDistance(new(x, y));
         public float CalculateDistance(Location compareToLocation)

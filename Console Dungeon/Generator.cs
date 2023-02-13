@@ -342,7 +342,8 @@ namespace Console_Dungeon
         }
         private static bool ChecksIfLocationIsAvailable(Location location , Map map)
         {
-            if (map.MapBorder.LocationBottomRight.X > location.X || map.MapBorder.LocationBottomRight.X > location.Y)
+            if (map.MapBorder.LocationBottomRight.X >= location.X && map.MapBorder.LocationTopLeft.X <= location.X  &&
+                map.MapBorder.LocationBottomRight.Y >= location.Y && map.MapBorder.LocationTopLeft.Y <= location.Y)
             {
                 return map.MapCollisions[location.X, location.Y] == Element.ElementsTayp.Empty;
             }
@@ -377,18 +378,60 @@ namespace Console_Dungeon
         #endregion
 
         #region
-        public static Interruptible GeneratInterruptible(Element.Elements element, Map map)
+        public static Interruptible GeneratInterruptible(Element.Elements element, Interruptible.ItemTayp ItemTayp, Map map)
         {
             Interruptible interruptible = new(
                $"{element} {GeneratId(element)}",
+                id,
                 element,
-                MatchItemTayp(element),
+                ItemTayp,
                 GeneratInterruptibleLocation(element, map),
                 MatchIsHidden(element),
                 false,
                 MatchIsBlocking(element)
-               ) ; 
-            return interruptible
+               ) ;
+            return interruptible;
+        }
+
+        /// <summary>
+        /// generate interactable inside a wall 
+        /// </summary>
+        /// <param name="element"></param>
+        /// <param name="ItemTayp"></param>
+        /// <param name="envaironment"></param>
+        /// <returns></returns>
+        public static Interruptible GeneratInterruptible(Element.Elements element, Interruptible.ItemTayp ItemTayp, Map map, Envaironment envaironment)
+        {
+            Location location = GeneratInterruptibleLocation(map, envaironment);
+            Interruptible interruptible = new(
+               $"{element} {GeneratId(element)}",
+                id,
+                MatchElements(element, envaironment, location),
+                ItemTayp,
+                location,
+                MatchIsHidden(element),
+                false,
+                MatchIsBlocking(element)
+               );
+            return interruptible;
+        }
+
+        private static Element.Elements MatchElements(Element.Elements element , Envaironment envaironment,Location location )
+        {
+            switch (element)
+            {
+                case Element.Elements.Door:
+                    if( envaironment.LocationTopLeft.X == location.X || envaironment.LocationBottomRight.X == location.X)
+                    {
+                        return Element.Elements.DoorHorizontal;
+                    }
+                    else
+                    {
+                        return Element.Elements.DoorVertical;
+                    }
+                default:
+                    return element;
+            }
         }
 
         private static bool MatchIsBlocking(Element.Elements element)
@@ -410,16 +453,46 @@ namespace Console_Dungeon
 
         private static Location GeneratInterruptibleLocation(Element.Elements element, Map map)
         {
-            if(element == Element.Elements.DoorHorizontal || element == Element.Elements.DoorVertical)
+            return GeneratEntityLocation(element, map);
+        }
+        public static Location GeneratInterruptibleLocation(Map map, Envaironment envaironment)
+        {
+            int numberOfLocation = 4;
+            Location[] passableLocations = new Location[numberOfLocation];
+            List<Location> passableLocationsList = new List<Location>();
+
+            //top wall
+            passableLocations[0] = new(Random.Shared.Next(envaironment.LocationTopLeft.X + 1, envaironment.LocationBottomRight.X), envaironment.LocationTopLeft.Y);
+            //Bottom wall
+            passableLocations[1] = new(Random.Shared.Next(envaironment.LocationTopLeft.X + 1, envaironment.LocationBottomRight.X), envaironment.LocationBottomRight.Y);
+            //Left wall
+            passableLocations[2] = new(envaironment.LocationTopLeft.X, Random.Shared.Next(envaironment.LocationTopLeft.Y + 1, envaironment.LocationBottomRight.Y));
+            //Right wall
+            passableLocations[3] = new(envaironment.LocationBottomRight.X, Random.Shared.Next(envaironment.LocationTopLeft.Y + 1, envaironment.LocationBottomRight.Y));
+
+
+            //Right wall
+            if (passableLocations[3].X == map.MapSize.X || ChecksIfLocationIsAvailable(new( + 1, passableLocations[3].Y), map))
+                passableLocationsList.Add(passableLocations[3]);
+            //Left wall
+            if (passableLocations[2].X == 0|| ChecksIfLocationIsAvailable( new(passableLocations[2].X - 1, passableLocations[2].Y ), map))
+                passableLocationsList.Add(passableLocations[2]);
+            //Bottom wall
+            if (passableLocations[1].Y == map.MapSize.Y || ChecksIfLocationIsAvailable( new(passableLocations[1].X, passableLocations[1].Y + 1), map))
+                passableLocationsList.Add(passableLocations[1]);
+            //top wall
+            if (passableLocations[2].Y == 0 || ChecksIfLocationIsAvailable( new(passableLocations[0].X, passableLocations[0].Y - 1), map))
+                passableLocationsList.Add(passableLocations[0]);
+
+
+            
+            if(passableLocationsList.Count == 0)
             {
-                
+                return GeneratInterruptibleLocation(map, envaironment);
             }
+            return passableLocationsList[Random.Shared.Next(passableLocationsList.Count)];
         }
 
-        private static object MatchItemTayp(Element.Elements element)
-        {
-            throw new NotImplementedException();
-        }
 
         static public Weapon GeneratWeapon(Element.Elements WhatGenerates)
         {

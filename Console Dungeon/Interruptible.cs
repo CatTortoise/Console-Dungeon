@@ -17,6 +17,7 @@ namespace Console_Dungeon
             Consumable
         }
         private string _name;
+        private int _id;
         private Element.Elements _elementCode;
         private Element.ElementsTayp _elementsTayp = Element.ElementsTayp.Interruptibles;
         private ItemTayp _thisItemTayp;
@@ -34,10 +35,12 @@ namespace Console_Dungeon
         public ItemTayp ThisItemTayp { get => _thisItemTayp; private set => _thisItemTayp = value; }
         public bool IsBlocking { get => _isBlocking; private set => _isBlocking = value; }
         public Element.ElementsTayp ElementsTayp { get => _elementsTayp; private set => _elementsTayp = value; }
+        public int Id { get => _id; private set => _id = value; }
 
-        public Interruptible(string name, Element.Elements elementCode, ItemTayp itemTayp, Location location, bool isHidden, bool isTriggered, bool isBlocking)
+        public Interruptible(string name, int id, Element.Elements elementCode, ItemTayp itemTayp, Location location, bool isHidden, bool isTriggered, bool isBlocking)
         {
             Name = name;
+            Id = id;
             ElementCode = elementCode;
             Location = location;
             IsHidden = isHidden;
@@ -54,6 +57,22 @@ namespace Console_Dungeon
             IsTriggered = interruptible.IsTriggered;
             ThisItemTayp = interruptible.ThisItemTayp;
             IsBlocking = interruptible.IsBlocking;
+        }
+        /// <summary>
+        /// This constructor is be used only in the Renderer class 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="id"></param>
+        /// <param name="elementCode"></param>
+        /// <param name="location"></param>
+        /// <param name="isHidden"></param>
+        public Interruptible(string name, int id, Element.Elements elementCode, Location location, bool isHidden)
+        {
+            Name = name;
+            Id = id;
+            ElementCode = elementCode;
+            Location = location;
+            IsHidden = isHidden;
         }
         public void InteractWith(Entity entityInteractor)
         {

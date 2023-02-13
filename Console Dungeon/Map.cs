@@ -15,15 +15,15 @@ namespace Console_Dungeon
         private Envaironment[] _mapEnvironments;
         private Entity[] _mapEntities;
         private Dictionary<Location, Interruptible> _mapInterruptibles;
-        Dictionary<Location, bool> _entityLocationsForFight;
-        Stack<Location> _ScanLocationsForFight;
+        private Dictionary<Location, bool> _entityLocationsForFight;
+        private Stack<Location> _ScanLocationsForFight;
         private bool _isCleared;
 
         public Map()
         {
             GenerateMap(30,60);
+            SpreadInterruptibles(MapEnvironments.Length);
             PopulateMap(10);
-            SpreadInterruptibles(MapEnvironments.Length, 4);
             LoadeAllMapElements();
         }
 
@@ -86,9 +86,15 @@ namespace Console_Dungeon
             }
         }
 
-        private void SpreadInterruptibles(int Buildings , int OtherInstructables  )
+        private void SpreadInterruptibles(int numberOfInstructables)
         {
-            throw new NotImplementedException();
+            MapInterruptibles = new(numberOfInstructables);
+            foreach (Envaironment environment in MapEnvironments)
+            {
+                Interruptible interruptible = new(Generator.GeneratInterruptible(Elements.Door, Interruptible.ItemTayp.NotAnItem, this, environment));
+                MapInterruptibles.Add(interruptible.Location, interruptible);
+            }
+            GenerateInterruptibleCollisions();
         }
 
         private void LoadeAllMapElements()
@@ -97,6 +103,10 @@ namespace Console_Dungeon
             foreach (Envaironment envaironment in MapEnvironments)
             {
                 Renderer.EnvaironmentQueue(envaironment, Renderer.Screen.Map);
+            }
+            foreach (Interruptible interruptible in MapInterruptibles.Values)
+            {
+                Renderer.InterruptibleQueue(interruptible, Renderer.Screen.Map);
             }
             foreach (Entity entities in MapEntities)
             {
@@ -126,6 +136,13 @@ namespace Console_Dungeon
             }
 
         }
+        private void LoadeAllInterruptibleMap()
+        {
+            foreach (Interruptible interruptible in MapInterruptibles.Values)
+            {
+                Renderer.InterruptibleQueue(interruptible, Renderer.Screen.Map);
+            }
+        }
         private void GenerateCollisionsEntityMap()
         { 
             foreach (Entity entity in MapEntities)
@@ -143,7 +160,7 @@ namespace Console_Dungeon
                 }
             }
         }
-        private void GenerateCollisions()
+        private void GenerateInterruptibleCollisions()
         {
             foreach(Interruptible interruptible in MapInterruptibles.Values)
             {
@@ -178,10 +195,14 @@ namespace Console_Dungeon
                     }
                     break;
                 case ElementsTayp.Interruptibles:
-                        collisions = MapInterruptibles[location].IsBlocking;
-                        MapInterruptibles[location].InteractWith(entity);
+                    collisions = MapInterruptibles[location].IsBlocking;
+                    MapInterruptibles[location].InteractWith(entity);
                     break;
             }
+            GenerateInterruptibleCollisions();
+            LoadeAllInterruptibleMap();
+
+
             return collisions;
         }
 

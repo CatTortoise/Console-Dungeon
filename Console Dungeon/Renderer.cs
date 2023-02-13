@@ -20,6 +20,7 @@ namespace Console_Dungeon
         private static Dictionary<Screen, Envaironment> _screens = new Dictionary<Screen, Envaironment>();
         private static Envaironment _menuLocation;
         private static Queue<Entity> _entitiesMapQueue = new Queue<Entity>(10);
+        private static Queue<Interruptible> _interruptiblesMapQueue = new Queue<Interruptible>(10);
 
         private static Queue<Envaironment> _envaironmentsMapQueue = new Queue<Envaironment>(10);
         private static Queue<Envaironment> _logeScreenQueue = new Queue<Envaironment>(10);
@@ -71,6 +72,26 @@ namespace Console_Dungeon
         {
             _printeMenu = true;
         }
+
+        public static bool InterruptibleQueue(Interruptible interruptible, Screen screen)
+        {
+            if (interruptible != null && !interruptible.IsHidden)
+            {
+                Interruptible InterruptibleForQueue;
+                Location res = _screens[screen].LocationTopLeft;
+                InterruptibleForQueue = new(
+                    $"{interruptible.Name} for Queue",
+                    interruptible.Id,
+                    interruptible.ElementCode,
+                    new(res.X + interruptible.Location.X, res.Y + interruptible.Location.Y),
+                    false
+                    );
+                _interruptiblesMapQueue.Enqueue(InterruptibleForQueue);
+                return true;
+            }
+            return false;
+        }
+
         public static bool EntitiesQueue(Entity entity, Screen screen, bool myTurn)
         {
             if (entity != null && entity.IsAlive)
@@ -135,6 +156,10 @@ namespace Console_Dungeon
         private static void RenderEntity(Entity entity)
         {
             RenderElement(entity.ElementCode, new Location(entity.Location.X, entity.Location.Y), entity.MyTurn,false);
+        }
+        private static void RenderInterruptible(Interruptible interruptible)
+        {
+            RenderElement(interruptible.ElementCode, new Location(interruptible.Location.X, interruptible.Location.Y));
         }
 
         private static void ErasureMenu()
@@ -252,7 +277,11 @@ namespace Console_Dungeon
                 RenderMenu();
                 _printeMenu = false;
             }
-
+            foreach (Interruptible interruptible in _interruptiblesMapQueue)
+            {
+                RenderInterruptible(interruptible);
+            }
+            _interruptiblesMapQueue.Clear();
             foreach (Entity entity in _entitiesMapQueue)
             {
                 Erasure(entity.PreviousLocation);
