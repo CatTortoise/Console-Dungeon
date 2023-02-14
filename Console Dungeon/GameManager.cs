@@ -16,45 +16,70 @@ namespace Console_Dungeon
         {
             Console.CursorVisible = false;
             Renderer.SetScreens();
-            Menu.SetMenu(Menu.MenuType.ArrayDataStructures);
-            //Renderer.PrinteMenu();
-            NewMap();
+            Menu.SetMenu(Menu.MenuType.ChangedFloor);
+            ChangedFloor(0);
             Renderer.Render();
             GameLoop();
         }
-        public static void ChangedFloor()
+        public static void ChangedFloor(int choice)
         {
-
+            InputManager.InputSystem = InputManager.inputType.Game;
+            Renderer.Render();
+            Console.Clear();
+            Renderer.ScreensQueue();
+            if (choice == 0)
+            {
+                if (_nextNewMap < _maps.Length)
+                {
+                    if (_maps[_currentMap + 1] == null)
+                    {
+                        NewMap();
+                    }
+                    else
+                    {
+                        _currentMap++;
+                    }
+                }
+            }
+            else if(_currentMap > 0)
+            {
+                _currentMap--;
+            }
+            _maps[_currentMap].LoadeAllMapElements();
         }
 
         private static void GameLoop()
         {
-             
+            bool isGameOver = true;
             do
             {
-                foreach(Entity entity in _maps[0].MapEntities)
+                isGameOver = true;
+                foreach (Entity entity in _maps[_currentMap].MapEntities)
                 {
-                    if (entity != null)
+                    if (entity != null && entity.IsAlive)
                     {
                         if (entity.IsPlayer == true)
                         {
+                            isGameOver = false;
                             Renderer.EntitiesQueue(entity,Renderer.Screen.Map,true);
                             Renderer.Render();
                         }
                             if (InputManager.InputSystem == InputManager.inputType.Game)
                             {
-                                _maps[0].MoveTo(InputManager.EntityInput(entity, _maps[0]), entity);
+                                _maps[_currentMap].MoveTo(InputManager.EntityInput(entity, _maps[_currentMap]), entity);
                             }
                         while (InputManager.InputSystem == InputManager.inputType.Menu)
                         {
                             Menu.MoveIndicator();
+                            break;
                         }
                         Renderer.Render();
                     }
                 }
                
-            } while(true); 
-            
+            } while(!isGameOver);
+            Console.Clear();
+            My_IO.PrintColoredMessage("Game Over", ConsoleColor.Red);
         }
         private static void NewMap()
         {
@@ -62,16 +87,30 @@ namespace Console_Dungeon
             int maxSize = Random.Shared.Next(minSize, Location.Ymax);
             if(_currentMap == _nextNewMap) 
             { 
-                _maps[_currentMap] = new Map(minSize, maxSize, 4 ,minSize / 3);
+                _maps[_nextNewMap] = new Map(minSize, maxSize, 4 ,minSize / 3);
             }
             else
             {
                 _maps[_nextNewMap] = new Map(minSize, maxSize, FilterPlayers(), minSize / 3, _nextNewMap);
             }
+            if(_nextNewMap != _maps.Length)
+            {
+                _currentMap = _nextNewMap;
+                _nextNewMap++;
+            }
+            
         }
         private static Entity[] FilterPlayers()
         {
-            return _maps[_currentMap].MapEntities.Where(entity => entity.IsPlayer).ToArray();
+            List<Entity> entities = new List<Entity>();
+            foreach (Entity entity in _maps[_currentMap].MapEntities)
+            {
+                if (entity.IsPlayer)
+                {
+                    entities.Add(entity);
+                }
+            }
+            return entities.ToArray();
         }
     }
 }

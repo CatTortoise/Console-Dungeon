@@ -101,7 +101,7 @@ namespace Console_Dungeon
             switch (_keyInput)
             {
                 case ConsoleKey.Enter:
-                    Menu.GetMenuChoice();
+                    GameManager.ChangedFloor(Menu.GetMenuChoice());
                     break;
                 case ConsoleKey.Escape:
                     InputSystem = inputType.Game;

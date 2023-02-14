@@ -13,7 +13,7 @@ namespace Console_Dungeon
         public enum MenuType
         {
             Empty,
-            ArrayDataStructures
+            ChangedFloor
         }
         #endregion
         #region Location
@@ -23,7 +23,7 @@ namespace Console_Dungeon
         #endregion
 
         private static MenuType _curentMenuType;
-        private static Dictionary<MenuType, Location> _startIndicatorLocationDictionary = new Dictionary<MenuType, Location> { { MenuType.ArrayDataStructures, new(0, 1) } };
+        private static Dictionary<MenuType, Location> _startIndicatorLocationDictionary = new Dictionary<MenuType, Location> { { MenuType.ChangedFloor, new(1, 2) } };
         private static Entity menuIndicator = new("MenuIndicator",true, _startIndicatorLocation, _startIndicatorLocation, Element.Elements.MenuIndicator, 1,false);
 
         public static Dictionary<MenuType, string[]> Menus { get => _menus; private set => _menus = value; }
@@ -32,26 +32,7 @@ namespace Console_Dungeon
         public static MenuType CurentMenuType { get => _curentMenuType; private set => _curentMenuType = value; }
 
 
-        static Dictionary<MenuType, Location> _startlocation = new Dictionary<MenuType, Location>
-        {
-            {
-                MenuType.Empty, new(0, 0) 
-            },
-            {
-                MenuType.ArrayDataStructures,new(0,0)
-            }
-        };
-        static Dictionary<MenuType, Location> _endlocation = new Dictionary<MenuType, Location>
-        {
-            {
-                MenuType.Empty, new(0, 0)
-            },
-            {
-                MenuType.ArrayDataStructures,new(0,8)
-            }
-        };
 
-        
         static Dictionary<MenuType, string[]> _menus = new Dictionary<MenuType, string[]>()
         {
             {
@@ -61,20 +42,36 @@ namespace Console_Dungeon
                 }
             },
             {
-                
-                MenuType.ArrayDataStructures,new string[]
+                MenuType.ChangedFloor,new string[]
                 {
-                    "Data Structures - Array\n",
-                    " 1. Configure initial\n",
-                    " 2. Insert an item\n",
-                    " 3. Delete an item\n",
-                    " 3. Delete an item\n",
-                    " 4. Show the number of items\n",
-                    " 5. Print all items\n",
-                    " 6. Exit\n"
+                    "Stairs:\n",
+                    " 1. Advance \n",
+                    " 2. Go back \n",
                 }
             }
         };
+
+        static Dictionary<MenuType, Location> _startlocation = new Dictionary<MenuType, Location>
+        {
+            {
+                MenuType.Empty, new(0, 0) 
+            },
+            {
+                MenuType.ChangedFloor,new(0,1)
+            }
+        };
+        static Dictionary<MenuType, Location> _endlocation = new Dictionary<MenuType, Location>
+        {
+            {
+                MenuType.Empty, new(0, 0)
+            },
+            {
+                MenuType.ChangedFloor,new(0,Menus[MenuType.ChangedFloor].Length)
+            }
+        };
+
+        
+
     
 
         public static void SetMenu(MenuType menuType)
@@ -92,11 +89,12 @@ namespace Console_Dungeon
         {
             Location location;
             location = InputManager.EntityInput(MenuIndicator);
-            if (location.Y < _endLocation.Y  && location.Y >= _startIndicatorLocation.Y)
+            if (location.Y <= _endLocation.Y && location.Y >= _startIndicatorLocation.Y)
             {
                 MenuIndicator.MoveTo(location);
-                Renderer.EntitiesQueue(Menu.MenuIndicator, Renderer.Screen.Menu);
+                    
             }
+            Renderer.EntitiesQueue(Menu.MenuIndicator, Renderer.Screen.Menu);
 
         }
         public static void GetStarEndLocations(Location ofsetLocation , out Location locationStart, out Location locationEnd)

@@ -29,6 +29,12 @@ namespace Console_Dungeon
                 );
             return entities;
         }
+        static public Entity RelocateEntity(Entity entity, Map map)
+        {
+            Location location = GeneratEntityLocation(entity.ElementCode, map);
+            entity.MoveTo(location, location);
+            return entity;
+        }
 
         private static Location GeneratEntityLocation(Element.Elements element , Map map)
         {
@@ -377,7 +383,7 @@ namespace Console_Dungeon
         }
         #endregion
 
-        #region
+        # region GeneratInterruptible
         public static Interruptible GeneratInterruptible(Element.Elements element, Interruptible.ItemTayp ItemTayp, Map map)
         {
             Interruptible interruptible = new(
@@ -470,19 +476,37 @@ namespace Console_Dungeon
             //Right wall
             passableLocations[3] = new(envaironment.LocationBottomRight.X, Random.Shared.Next(envaironment.LocationTopLeft.Y + 1, envaironment.LocationBottomRight.Y));
 
-
-            //Right wall
-            if (passableLocations[3].X == map.MapSize.X || ChecksIfLocationIsAvailable(new( + 1, passableLocations[3].Y), map))
-                passableLocationsList.Add(passableLocations[3]);
-            //Left wall
-            if (passableLocations[2].X == 0|| ChecksIfLocationIsAvailable( new(passableLocations[2].X - 1, passableLocations[2].Y ), map))
-                passableLocationsList.Add(passableLocations[2]);
-            //Bottom wall
-            if (passableLocations[1].Y == map.MapSize.Y || ChecksIfLocationIsAvailable( new(passableLocations[1].X, passableLocations[1].Y + 1), map))
-                passableLocationsList.Add(passableLocations[1]);
-            //top wall
-            if (passableLocations[2].Y == 0 || ChecksIfLocationIsAvailable( new(passableLocations[0].X, passableLocations[0].Y - 1), map))
-                passableLocationsList.Add(passableLocations[0]);
+            if (map.MapBorder.LocationBottomRight.CompareLocations(envaironment.LocationBottomRight))
+            {
+                //Right wall
+                if (passableLocations[3].X == map.MapSize.X || ChecksIfLocationIsAvailable(new(-1, passableLocations[3].Y), map))
+                    passableLocationsList.Add(passableLocations[3]);
+                //Left wall
+                if (passableLocations[2].X == 0 || ChecksIfLocationIsAvailable(new(passableLocations[2].X + 1, passableLocations[2].Y), map))
+                    passableLocationsList.Add(passableLocations[2]);
+                //Bottom wall
+                if (passableLocations[1].Y == map.MapSize.Y || ChecksIfLocationIsAvailable(new(passableLocations[1].X, passableLocations[1].Y - 1), map))
+                    passableLocationsList.Add(passableLocations[1]);
+                //top wall
+                if (passableLocations[2].Y == 0 || ChecksIfLocationIsAvailable(new(passableLocations[0].X, passableLocations[0].Y + 1), map))
+                    passableLocationsList.Add(passableLocations[0]);
+            }
+            else
+            {
+                //Right wall
+                if (passableLocations[3].X == map.MapSize.X || ChecksIfLocationIsAvailable(new(+1, passableLocations[3].Y), map))
+                    passableLocationsList.Add(passableLocations[3]);
+                //Left wall
+                if (passableLocations[2].X == 0 || ChecksIfLocationIsAvailable(new(passableLocations[2].X - 1, passableLocations[2].Y), map))
+                    passableLocationsList.Add(passableLocations[2]);
+                //Bottom wall
+                if (passableLocations[1].Y == map.MapSize.Y || ChecksIfLocationIsAvailable(new(passableLocations[1].X, passableLocations[1].Y + 1), map))
+                    passableLocationsList.Add(passableLocations[1]);
+                //top wall
+                if (passableLocations[2].Y == 0 || ChecksIfLocationIsAvailable(new(passableLocations[0].X, passableLocations[0].Y - 1), map))
+                    passableLocationsList.Add(passableLocations[0]);
+            }
+            
 
 
             
@@ -492,7 +516,6 @@ namespace Console_Dungeon
             }
             return passableLocationsList[Random.Shared.Next(passableLocationsList.Count)];
         }
-
 
         static public Weapon GeneratWeapon(Element.Elements WhatGenerates)
         {

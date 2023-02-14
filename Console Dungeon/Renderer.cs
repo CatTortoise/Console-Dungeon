@@ -37,8 +37,8 @@ namespace Console_Dungeon
         }
         public static void SetScreens()
         {
-            Location _mapScreens;
-            Location _menuScreens;
+            //Location _mapScreens;
+            //Location _menuScreens;
             Console.SetWindowSize(Location.Xmax, Location.Ymax);
             Console.SetBufferSize(Location.Xmax, Location.Ymax);
             int screenDivaiderX = (int)Math.Ceiling(Location.Xmax * 0.2);
@@ -53,7 +53,6 @@ namespace Console_Dungeon
                     new(_screens[Screen.Window].LocationTopLeft.X ,_screens[Screen.Window].LocationTopLeft.Y),
                     new(screenDivaiderX, Location.Ymax)
                 ));
-            EnvaironmentQueue(_screens[Screen.Log], Screen.Window);
 
             _screens.Add(Screen.Map,
                 new("Map",
@@ -61,7 +60,6 @@ namespace Console_Dungeon
                     new(_screens[Screen.Log].LocationBottomRight.X, _screens[Screen.Log].LocationTopLeft.Y),
                     new(_screens[Screen.Log].LocationBottomRight.X + screenDivaiderX * 3, Location.Ymax)
                     ));
-            EnvaironmentQueue(_screens[Screen.Map], Screen.Window);
 
             _screens.Add(Screen.Menu,
                 new(
@@ -70,11 +68,17 @@ namespace Console_Dungeon
                     new(_screens[Screen.Map].LocationBottomRight.X, _screens[Screen.Map].LocationTopLeft.Y),
                     new(_screens[Screen.Map].LocationBottomRight.X + screenDivaiderX, Location.Ymax)
                     ));
-            EnvaironmentQueue(_screens[Screen.Menu], Screen.Window);
+            ScreensQueue();
         }
 
 
         #region Queue
+        public static void ScreensQueue()
+        {
+            EnvaironmentQueue(_screens[Screen.Log], Screen.Window);
+            EnvaironmentQueue(_screens[Screen.Map], Screen.Window);
+            EnvaironmentQueue(_screens[Screen.Menu], Screen.Window);
+        }
         public static void PrinteMenu()
         {
             _printeMenu = true;
@@ -247,16 +251,21 @@ namespace Console_Dungeon
             ElementDictionary.TryGetValue(element, out str);
             Console.Write(str);
         }
+       
+        
         private static void RenderMenu()
         {
             string[] strs = Menu.Menus[Menu.CurentMenuType];
-            Location locationStart;
-            Location locationEnd;
-            Menu.GetStarEndLocations(_screens[Screen.Menu].LocationTopLeft, out locationStart, out locationEnd);
+            //Location locationStart;
+            //Location locationEnd;
+            Location ofsetLocation = _screens[Screen.Menu].LocationTopLeft;
+            ofsetLocation.X++;
+            ofsetLocation.Y++;
+            //Menu.GetStarEndLocations(ofsetLocation, out locationStart, out locationEnd);
             foreach (string str in strs)
             {
-                RenderStrin(str, locationStart,Screen.Menu);
-                locationStart.Y++;
+                RenderStrin(str, ofsetLocation, Screen.Menu);
+                ofsetLocation.Y++;
             }
             
         }

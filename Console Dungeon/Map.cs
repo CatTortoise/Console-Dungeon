@@ -20,6 +20,13 @@ namespace Console_Dungeon
         private bool _isCleared;
 
 
+        public Entity[] MapEntities { get => _mapEntities; private set => _mapEntities = value; }
+        public Location MapSize { get => _mapSize; private set => _mapSize = value; }
+        public ElementsTayp[,] MapCollisions { get => _mapCollisions; private set => _mapCollisions = value; }
+        public Envaironment[] MapEnvironments { get => _mapEnvironments; private set => _mapEnvironments = value; }
+        public Envaironment MapBorder { get => _mapBorder; private set => _mapBorder = value; }
+        public Dictionary<Location, Interruptible> MapInterruptibles { get => _mapInterruptibles; private set => _mapInterruptibles = value; }
+
         /// <summary>
         /// This map constructor Only to be used for the first map 
         /// </summary>
@@ -42,12 +49,43 @@ namespace Console_Dungeon
             LoadeAllMapElements();
         }
 
-        public Entity[] MapEntities { get => _mapEntities; private set => _mapEntities = value; }
-        public Location MapSize { get => _mapSize; private set => _mapSize = value; }
-        public ElementsTayp[,] MapCollisions { get => _mapCollisions; private set => _mapCollisions = value; }
-        public Envaironment[] MapEnvironments { get => _mapEnvironments; private set => _mapEnvironments = value; }
-        public Envaironment MapBorder { get => _mapBorder; private set => _mapBorder = value; }
-        public Dictionary<Location, Interruptible> MapInterruptibles { get => _mapInterruptibles; private set => _mapInterruptibles = value; }
+        public void MoveTo(Location location, Entity entity)
+        {
+            if (location.X <= MapSize.X && location.Y <= MapSize.Y)
+            {
+                if (!entity.Location.CompareLocations(location) && !CheckCollision(location, entity))
+                {
+                    MapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Empty;
+                    entity.MoveTo(location);
+                    GenerateCollisionsEntityMap();
+                }
+                else
+                {
+                    entity.MoveTo(entity.Location);
+                }
+                Renderer.EntitiesQueue(entity, Renderer.Screen.Map);
+            }
+        }
+
+        public void LoadeAllMapElements()
+        {
+            Renderer.EnvaironmentQueue(MapBorder, Renderer.Screen.Map);
+            foreach (Envaironment envaironment in MapEnvironments)
+            {
+                Renderer.EnvaironmentQueue(envaironment, Renderer.Screen.Map);
+            }
+            foreach (Interruptible interruptible in MapInterruptibles.Values)
+            {
+                Renderer.InterruptibleQueue(interruptible, Renderer.Screen.Map);
+            }
+            foreach (Entity entities in MapEntities)
+            {
+                if (entities.IsAlive)
+                {
+                    Renderer.EntitiesQueue(entities, Renderer.Screen.Map);
+                }
+            }
+        }
 
         private void PopulateMap(int numberOfPlayer,int numberOfNpc)
         {
@@ -67,11 +105,14 @@ namespace Console_Dungeon
         }
         private void PopulateMap(Entity[] players, int numberOfNpc, int numberOfHobGoblins)
         {
-
+            if(numberOfNpc < numberOfHobGoblins)
+            {
+                numberOfHobGoblins = numberOfNpc;
+            }
             _mapEntities = new Entity[players.Length + numberOfNpc];
             for (int i = 0; i < players.Length; i++)
             {
-                _mapEntities[i] = players[i];
+                _mapEntities[i] = Generator.RelocateEntity(players[i],this);
                 GenerateCollisionsEntityMap();
             }
             for (int i = players.Length; i < _mapEntities.Length - numberOfHobGoblins; i++)
@@ -79,31 +120,13 @@ namespace Console_Dungeon
                 _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Goblin, this));
                 GenerateCollisionsEntityMap();
             }
-            for(int i = _mapEntities.Length - numberOfHobGoblins; i < numberOfHobGoblins; i++)
+            for(int i = _mapEntities.Length - numberOfHobGoblins; i < _mapEntities.Length; i++)
             {
                 _mapEntities[i] = new Entity(Generator.GeneratEntity(Elements.Hob_Goblin, this));
                 GenerateCollisionsEntityMap();
             }
 
         }
-
-        public void MoveTo(Location location,Entity entity)
-        {
-            //Checks if love is possible
-            if (!entity.Location.CompareLocations(location) && !CheckCollision(location, entity))
-            {
-                MapCollisions[entity.Location.X, entity.Location.Y] = ElementsTayp.Empty;
-                entity.MoveTo(location);
-                GenerateCollisionsEntityMap();
-            }
-            else
-            {
-                entity.MoveTo(entity.Location);
-            }
-            Renderer.EntitiesQueue(entity, Renderer.Screen.Map);
-        }
-
-     
 
         private void GenerateMap(int minMapSize,int maxMapSize)
         {
@@ -147,25 +170,7 @@ namespace Console_Dungeon
             GenerateInterruptibleCollisions();
         }
 
-        private void LoadeAllMapElements()
-        {
-            Renderer.EnvaironmentQueue(MapBorder, Renderer.Screen.Map);
-            foreach (Envaironment envaironment in MapEnvironments)
-            {
-                Renderer.EnvaironmentQueue(envaironment, Renderer.Screen.Map);
-            }
-            foreach (Interruptible interruptible in MapInterruptibles.Values)
-            {
-                Renderer.InterruptibleQueue(interruptible, Renderer.Screen.Map);
-            }
-            foreach (Entity entities in MapEntities)
-            {
-                if (entities.IsAlive)
-                {
-                    Renderer.EntitiesQueue(entities, Renderer.Screen.Map);
-                }
-            }
-        }
+        
 
         private void GenerateCollisionsEnvaironmentMap() 
         {
@@ -223,36 +228,35 @@ namespace Console_Dungeon
         {
 
             bool collisions = false;
-            switch (MapCollisions[location.X, location.Y])
-            {
-                case ElementsTayp.Empty:
-                    break;
-                case ElementsTayp.Environment:
-                    collisions = true;
-                    break;
-                case ElementsTayp.Entities:
-                    foreach (Entity other in _mapEntities.Where<Entity>(checkEntity => checkEntity.Location.CompareLocations(location)))
-                    {
+                switch (MapCollisions[location.X, location.Y])
+                {
+                    case ElementsTayp.Empty:
+                        break;
+                    case ElementsTayp.Environment:
                         collisions = true;
-                        if (entity.CollidedWithHostile(other.ElementCode)) 
+                        break;
+                    case ElementsTayp.Entities:
+                        foreach (Entity other in _mapEntities.Where<Entity>(checkEntity => checkEntity.Location.CompareLocations(location)))
                         {
-                            Entity[] entitysFortoTheDeath = EntitiesCollisions(location);
-                            ToTheDeath.Fight(entitysFortoTheDeath);
-                            GenerateCollisionsEntityMap();
-                            LoadeAllMapElements();
-                            break;
+                            collisions = true;
+                            if (entity.CollidedWithHostile(other.ElementCode))
+                            {
+                                Entity[] entitysFortoTheDeath = EntitiesCollisions(location);
+                                ToTheDeath.Fight(entitysFortoTheDeath);
+                                GenerateCollisionsEntityMap();
+                                LoadeAllMapElements();
+                                Renderer.ScreensQueue();
+                                break;
+                            }
                         }
-                    }
-                    break;
-                case ElementsTayp.Interruptibles:
-                    collisions = MapInterruptibles[location].IsBlocking;
-                    MapInterruptibles[location].InteractWith(entity);
-                    break;
-            }
-            GenerateInterruptibleCollisions();
-            LoadeAllInterruptibleMap();
-
-
+                        break;
+                    case ElementsTayp.Interruptibles:
+                        collisions = MapInterruptibles[location].IsBlocking;
+                        MapInterruptibles[location].InteractWith(entity);
+                        break;
+                }
+                GenerateInterruptibleCollisions();
+                LoadeAllInterruptibleMap();
             return collisions;
         }
 
