@@ -1,6 +1,6 @@
 ﻿//Basic C# for Games
 //Dor Ben-Dor
-//Class 05 - Classes I
+//Final Project 
 //Yshai flising
 namespace Console_Dungeon
 {
