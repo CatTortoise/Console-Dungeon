@@ -465,6 +465,10 @@ namespace Console_Dungeon
         {
             return GeneratEntityLocation(element, map);
         }
+
+        /// <summary>
+        /// Generates locations for interactable ales inside walls 
+        /// </summary>
         public static Location GeneratInterruptibleLocation(Map map, Envaironment envaironment)
         {
             int numberOfLocation = 4;
@@ -492,7 +496,7 @@ namespace Console_Dungeon
                 if (passableLocations[1].Y == map.MapSize.Y || ChecksIfLocationIsAvailable(new(passableLocations[1].X, passableLocations[1].Y - 1), map))
                     passableLocationsList.Add(passableLocations[1]);
                 //top wall
-                if (passableLocations[2].Y == 0 || ChecksIfLocationIsAvailable(new(passableLocations[0].X, passableLocations[0].Y + 1), map))
+                if (passableLocations[0].Y == 0 || ChecksIfLocationIsAvailable(new(passableLocations[0].X, passableLocations[0].Y + 1), map))
                     passableLocationsList.Add(passableLocations[0]);
             }
             else
@@ -507,7 +511,7 @@ namespace Console_Dungeon
                 if (passableLocations[1].Y == map.MapSize.Y || ChecksIfLocationIsAvailable(new(passableLocations[1].X, passableLocations[1].Y + 1), map))
                     passableLocationsList.Add(passableLocations[1]);
                 //top wall
-                if (passableLocations[2].Y == 0 || ChecksIfLocationIsAvailable(new(passableLocations[0].X, passableLocations[0].Y - 1), map))
+                if (passableLocations[0].Y == 0 || ChecksIfLocationIsAvailable(new(passableLocations[0].X, passableLocations[0].Y - 1), map))
                     passableLocationsList.Add(passableLocations[0]);
             }
             

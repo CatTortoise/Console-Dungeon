@@ -18,6 +18,7 @@ namespace Console_Dungeon
         private Envaironment _mapBorder;
         private Envaironment[] _mapEnvironments;
         private Entity[] _mapEntities;
+        private Location[] _saveEntitiesLocations;
         private Dictionary<Location, Interruptible> _mapInterruptibles;
         private Dictionary<Location, bool> _entityLocationsForFight;
         private Stack<Location> _ScanLocationsForFight;
@@ -30,6 +31,8 @@ namespace Console_Dungeon
         public Envaironment[] MapEnvironments { get => _mapEnvironments; private set => _mapEnvironments = value; }
         public Envaironment MapBorder { get => _mapBorder; private set => _mapBorder = value; }
         public Dictionary<Location, Interruptible> MapInterruptibles { get => _mapInterruptibles; private set => _mapInterruptibles = value; }
+
+
 
         /// <summary>
         /// This map constructor Only to be used for the first map 
@@ -53,6 +56,19 @@ namespace Console_Dungeon
             LoadeAllMapElements();
         }
 
+        public void ReenterMapfloor()
+        {
+            foreach (Entity entities in MapEntities)
+            {
+              //  entities.Location;
+            }
+            LoadeAllMapElements();
+        }
+
+        public void SaveEntitiesLocations()
+        {
+
+        }
         public void MoveTo(Location location, Entity entity)
         {
             if (location.X <= MapSize.X && location.Y <= MapSize.Y)
@@ -248,22 +264,34 @@ namespace Console_Dungeon
                                 Entity[] entitysFortoTheDeath = EntitiesCollisions(location);
                                 ToTheDeath.Fight(entitysFortoTheDeath);
                                 GenerateCollisionsEntityMap();
-                                LoadeAllMapElements();
                                 Renderer.ScreensQueue();
+                                LoadeAllMapElements();
                                 break;
                             }
                         }
                         break;
                     case ElementsTayp.Interruptibles:
+                        IsStaircase(location, entity);
                         collisions = MapInterruptibles[location].IsBlocking;
                         MapInterruptibles[location].InteractWith(entity);
-                        break;
+                    break;
                 }
                 GenerateInterruptibleCollisions();
-                LoadeAllInterruptibleMap();
             return collisions;
         }
 
+        private void IsStaircase(Location location, Entity entity)
+        {
+            if (entity.IsPlayer &&!MapInterruptibles[location].IsBlocking)
+            {
+                if ((location.X == MapBorder.LocationTopLeft.X || location.X == MapBorder.LocationBottomRight.X) &&
+                    (location.Y == MapBorder.LocationTopLeft.Y || location.Y == MapBorder.LocationBottomRight.Y))
+                {
+                    GameManager.ChangedFloor();
+                }
+            }
+            
+        }
 
         private Entity[] EntitiesCollisions(Location StartingLocation)
         {

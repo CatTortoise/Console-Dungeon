@@ -31,8 +31,9 @@ namespace Console_Dungeon
         private static Queue<Envaironment> _logeScreenQueue = new Queue<Envaironment>(10);
         private static Queue<Envaironment> _MenuScreenQueue = new Queue<Envaironment>(10);
         private static bool _printeMenu = false;
+        private static bool _clearScreen = false;
 
-        
+
         public static Location MaxScreenSize(Screen screen)
         {
             Location location = new(_screens[screen].LocationBottomRight.X - _screens[screen].LocationTopLeft.X,
@@ -161,8 +162,13 @@ namespace Console_Dungeon
         }
         #endregion 
 
+        public static void ClearScreen()
+        {
+            _clearScreen = true;
+        }
         
-        public static bool Erasure(Location location)
+
+        private static bool Erasure(Location location)
         {
             RenderElement(Elements.NonVisibleArea, location);
             return true;
@@ -278,12 +284,23 @@ namespace Console_Dungeon
             Console.SetCursorPosition(location.X, location.Y);
             string WriteStr = str;
             Console.Write(str);
-            
         }
 
 
         public static void Render()
         {
+            if (_clearScreen)
+            {
+                Console.Clear();
+                _clearScreen = false;
+            }
+            if (_printeMenu)
+            {
+                ErasureMenu();
+                RenderMenu();
+                _printeMenu = false;
+            }
+
             foreach (Envaironment envaironment in _envaironmentsMapQueue)
             {
                 ErasureEnvaironment(envaironment);
@@ -291,12 +308,7 @@ namespace Console_Dungeon
             }
             _envaironmentsMapQueue.Clear();
 
-            if (_printeMenu)
-            {
-                ErasureMenu();
-                RenderMenu();
-                _printeMenu = false;
-            }
+            
             foreach (Interruptible interruptible in _interruptiblesMapQueue)
             {
                 RenderInterruptible(interruptible);

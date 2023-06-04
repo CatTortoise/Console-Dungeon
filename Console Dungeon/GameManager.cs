@@ -25,11 +25,15 @@ namespace Console_Dungeon
             Renderer.Render();
             GameLoop();
         }
+        public static void ChangedFloor()
+        {
+            Menu.SetMenu(Menu.MenuType.ChangedFloor);
+            InputManager.InputSystem = InputManager.inputType.Menu;
+        }
         public static void ChangedFloor(int choice)
         {
             InputManager.InputSystem = InputManager.inputType.Game;
-            Renderer.Render();
-            Console.Clear();
+            Renderer.ClearScreen();
             Renderer.ScreensQueue();
             if (choice == 0)
             {
@@ -49,7 +53,7 @@ namespace Console_Dungeon
             {
                 _currentMap--;
             }
-            _maps[_currentMap].LoadeAllMapElements();
+            _maps[_currentMap].ReenterMapfloor();
         }
 
         private static void GameLoop()
